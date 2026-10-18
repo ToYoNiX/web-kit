@@ -1,5 +1,13 @@
 # @toyonix/web-kit
 
+## 0.1.2
+
+### Patch Changes
+
+- [#6](https://github.com/ToYoNiX/web-kit/pull/6) [`cf836ad`](https://github.com/ToYoNiX/web-kit/commit/cf836adb4557463cc5a79d4cf462cc62254471f7) Thanks [@ToYoNiX](https://github.com/ToYoNiX)! - `AppShell` header on narrow screens (≤640px): the app links move to their own row under the logo and scroll sideways when there are many, instead of wrapping awkwardly next to the logo.
+
+- [#6](https://github.com/ToYoNiX/web-kit/pull/6) [`cf836ad`](https://github.com/ToYoNiX/web-kit/commit/cf836adb4557463cc5a79d4cf462cc62254471f7) Thanks [@ToYoNiX](https://github.com/ToYoNiX)! - New `TableOfContents` component for long articles: a sticky "On this page" column on wide screens (highlighting the current section), and on narrow screens a floating button that opens the list in a menu sliding in from the right. Use it inside the new `.tx-with-toc` layout next to the article. Also: article headings now get `scroll-margin-top`, so anchor jumps land below the sticky header instead of under it.
+
 ## 0.1.1
 
 ### Patch Changes
