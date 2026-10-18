@@ -562,6 +562,27 @@
   font-style: italic;
 }
 
+/* Wide images span the column; tall ones are capped at most of the viewport and centered. */
+.tx-prose img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(80vh, 900px);
+  margin: 1.6em auto;
+  border: var(--tx-border-width) solid var(--tx-border);
+  box-shadow: var(--tx-shadow);
+}
+
+/* Section break: a short accent marker bar, centered. */
+.tx-prose hr {
+  width: 96px;
+  height: 0;
+  margin: 2.6em auto;
+  border: 0;
+  border-top: 6px solid var(--tx-accent);
+}
+
 .tx-dropcap::first-letter,
 .tx-prose--dropcap > p:first-of-type::first-letter {
   float: left;

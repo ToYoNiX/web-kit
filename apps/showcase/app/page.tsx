@@ -176,6 +176,7 @@ export default function Showcase() {
                     toyonix/web-kit/.github/workflows/site-deploy.yml@v0
                   </span>
                 </CodeBlock>
+                <hr />
                 <blockquote>Fix it when you see it, but make sure you see it.</blockquote>
                 <p>
                   A failed build never takes a site down; the previous version stays live until the next green
