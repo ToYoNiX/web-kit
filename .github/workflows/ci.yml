@@ -31,3 +31,64 @@ jobs:
       - run: npm test
       - name: Build the showcase (static export, as a site would)
         run: npm run build -w showcase
+
+  # The canary: install this PR's kit, packed exactly as npm would publish it, into a fresh
+  # web-starter and run the site's own checks. Catches packaging mistakes, config changes that
+  # break sites, and removed APIs before anything is released to every site.
+  canary:
+    name: canary (web-starter)
+    runs-on: ubuntu-latest
+    env:
+      STARTER_REPO: ToYoNiX/web-starter
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: kit
+
+      # For coordinated changes, push a branch with the same name to web-starter and the
+      # canary tests against it; otherwise it uses web-starter's main.
+      - id: starter
+        name: Pick the web-starter branch
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          if [ -n "$BRANCH" ] && git ls-remote --exit-code --heads "https://github.com/$STARTER_REPO.git" "$BRANCH" >/dev/null; then
+            ref="$BRANCH"
+          else
+            ref=main
+          fi
+          echo "Testing against $STARTER_REPO@$ref"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ env.STARTER_REPO }}
+          ref: ${{ steps.starter.outputs.ref }}
+          path: starter
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: kit/.nvmrc
+          cache: npm
+          cache-dependency-path: |
+            kit/package-lock.json
+            starter/package-lock.json
+
+      - name: Pack the kit from this PR
+        working-directory: kit
+        run: |
+          npm ci
+          npm run build
+          npm pack -w @toyonix/web-kit --pack-destination "$RUNNER_TEMP"
+
+      - name: Install it into web-starter
+        working-directory: starter
+        run: |
+          npm ci
+          npm install --no-save "$RUNNER_TEMP"/toyonix-web-kit-*.tgz
+          # Informational: the version can be outside the starter's range (e.g. on a release PR).
+          npm ls @toyonix/web-kit || true
+
+      - name: Run web-starter's checks (format, lint, typecheck, build)
+        working-directory: starter
+        run: npm run check
