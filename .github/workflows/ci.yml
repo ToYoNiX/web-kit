@@ -23,9 +23,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # Build first: the showcase's types and the Prettier Tailwind plugin read the built kit.
+      - run: npm run build
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      - name: Build the kit and the showcase (static export, as a site would)
-        run: npm run showcase
+      - name: Build the showcase (static export, as a site would)
+        run: npm run build -w showcase

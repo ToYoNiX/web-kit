@@ -18,10 +18,9 @@
     "test": "npm run test -w @toyonix/web-kit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run showcase",
+    "check": "npm run build && npm run format:check && npm run lint && npm run typecheck && npm test && npm run build -w showcase",
     "changeset": "changeset",
-    "version-packages": "changeset version && npm install --package-lock-only",
-    "release": "npm run build && changeset publish"
+    "version-packages": "changeset version && npm install --package-lock-only"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",
