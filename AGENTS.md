@@ -36,6 +36,17 @@ npm run dev          # showcase dev server (build the kit first: npm run build)
 npm run changeset    # record a change (required for any behavior change to the package)
 ```
 
+## The canary
+
+Every kit PR runs a `canary (web-starter)` CI job: it packs the kit exactly as npm would
+publish it, installs that tarball into a fresh checkout of `ToYoNiX/web-starter`, and runs the
+site's own `npm run check` (format, lint, typecheck, static build). A red canary means this
+change would break sites. Fix the kit; don't weaken the canary.
+
+For an intentional change that needs the template updated too, push a branch with the **same
+name** to web-starter. The canary tests against that branch instead of web-starter's `main`.
+Merge the web-starter branch first, then the kit PR.
+
 ## Stability contract (do not break this)
 
 The kit is consumed by many repos that update automatically. From `1.0`: **no breaking changes
