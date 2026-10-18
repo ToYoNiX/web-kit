@@ -54,3 +54,6 @@ export {
 } from "./DropdownMenu";
 export { Tooltip, type TooltipProps } from "./Tooltip";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
+
+// articles
+export { TableOfContents, type TableOfContentsProps, type TocItem } from "./TableOfContents";
