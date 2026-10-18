@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { ROOT_APP_ID, appHref, getAppId } from "../env";
 import { navApps, type Registry, type RegistryApp } from "../registry";
 import { ThemeToggle } from "./ThemeToggle";
@@ -25,6 +25,34 @@ export interface AppShellProps {
 export function AppShell({ children, registry, appTitle, nav, footer }: AppShellProps) {
   const appId = getAppId();
   const apps: RegistryApp[] = navApps(useRegistry(registry));
+  const navRef = useRef<HTMLElement>(null);
+  const appCount = apps.length;
+
+  // On narrow screens the app links scroll sideways if they don't fit: keep the current app in
+  // view, and mark which edges have more links beyond them (the CSS fades those edges as a hint).
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const markEdges = () => {
+      const max = nav.scrollWidth - nav.clientWidth;
+      nav.toggleAttribute("data-more-left", max > 1 && nav.scrollLeft > 1);
+      nav.toggleAttribute("data-more-right", max > 1 && nav.scrollLeft < max - 1);
+    };
+    const update = () => {
+      const current = nav.querySelector<HTMLElement>("[aria-current]");
+      if (current && nav.scrollWidth > nav.clientWidth + 1) {
+        nav.scrollLeft = current.offsetLeft - (nav.clientWidth - current.offsetWidth) / 2;
+      }
+      markEdges();
+    };
+    update();
+    nav.addEventListener("scroll", markEdges, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      nav.removeEventListener("scroll", markEdges);
+      window.removeEventListener("resize", update);
+    };
+  }, [appCount]);
   if (appId !== ROOT_APP_ID && !apps.some((app) => app.id === appId)) {
     apps.push({
       id: appId,
@@ -50,7 +78,7 @@ export function AppShell({ children, registry, appTitle, nav, footer }: AppShell
             </span>
             <span>toyonix</span>
           </a>
-          <nav className="tx-nav" aria-label="toyonix apps">
+          <nav ref={navRef} className="tx-nav" aria-label="toyonix apps">
             <a href="/" aria-current={appId === ROOT_APP_ID ? "true" : undefined}>
               Home
             </a>

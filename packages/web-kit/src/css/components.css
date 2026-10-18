@@ -111,32 +111,80 @@
   outline: var(--tx-border-width) solid var(--tx-border);
 }
 
-/* Narrow screens: app links get their own row under the logo, scrolling sideways if needed. */
+/*
+ * Narrow screens: stay on one row. The header gets more compact, and if the app links still
+ * don't fit, they scroll sideways (AppShell scrolls the current app into view).
+ */
 @media (max-width: 640px) {
   .tx-header__inner {
-    flex-wrap: wrap;
-    row-gap: 4px;
-    padding-top: 10px;
-    padding-bottom: 8px;
-    min-height: 0;
+    gap: 10px;
+    min-height: 56px;
   }
 
-  .tx-header__inner .tx-icon-btn {
-    margin-left: auto;
+  .tx-logo {
+    flex: none;
+    gap: 8px;
+    font-size: 20px;
+  }
+
+  .tx-logo__mark {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
   }
 
   .tx-nav {
-    order: 3;
+    flex: 0 1 auto;
     flex-wrap: nowrap;
-    width: 100%;
-    margin-left: 0;
-    padding: 4px 3px 6px;
+    min-width: 0;
+    padding: 3px; /* room for the current app's outline */
     overflow-x: auto;
     scrollbar-width: none;
   }
 
+  .tx-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Fade only the edges that have more links beyond them (set by AppShell), hinting at the scroll. */
+  .tx-nav[data-more-left],
+  .tx-nav[data-more-right] {
+    --tx-nav-fade-left: 0px;
+    --tx-nav-fade-right: 0px;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--tx-nav-fade-left),
+      #000 calc(100% - var(--tx-nav-fade-right)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--tx-nav-fade-left),
+      #000 calc(100% - var(--tx-nav-fade-right)),
+      transparent
+    );
+  }
+
+  .tx-nav[data-more-left] {
+    --tx-nav-fade-left: 22px;
+  }
+
+  .tx-nav[data-more-right] {
+    --tx-nav-fade-right: 22px;
+  }
+
   .tx-nav a {
     flex: none;
+    padding: 6px 9px;
+    font-size: 14px;
+  }
+
+  .tx-header__inner .tx-icon-btn {
+    flex: none;
+    width: 36px;
+    height: 36px;
   }
 }
 
