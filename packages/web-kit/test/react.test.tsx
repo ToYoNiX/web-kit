@@ -1,6 +1,6 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { AppShell, Button, Card, CardGrid, ThemeToggle } from "../src/react";
+import { AppShell, Button, Card, CardGrid, TableOfContents, ThemeToggle } from "../src/react";
 import type { Registry } from "../src/registry";
 
 const snapshot: Registry = {
@@ -112,5 +112,40 @@ describe("primitives", () => {
     );
     expect(screen.getByRole("link", { name: "Gen" }).className).toBe("tx-card tx-card--link");
     expect(screen.getByText("Static").className).toBe("tx-card");
+  });
+});
+
+describe("TableOfContents", () => {
+  const items = [
+    { id: "intro", text: "Intro", depth: 2 as const },
+    { id: "setup", text: "Setup", depth: 2 as const },
+    { id: "details", text: "Details", depth: 3 as const },
+  ];
+
+  it("renders nothing below minItems", () => {
+    const { container } = render(<TableOfContents items={items.slice(0, 2)} />);
+    expect(container.innerHTML).toBe("");
+  });
+
+  it("renders anchor links, indenting sub-sections", () => {
+    render(<TableOfContents items={items} />);
+    const nav = screen.getByRole("navigation", { name: "On this page" });
+    const links = within(nav).getAllByRole("link");
+    expect(links.map((a) => a.getAttribute("href"))).toEqual(["#intro", "#setup", "#details"]);
+    expect(links[2]!.closest("li")!.className).toContain("tx-toc__item--sub");
+    expect(links[0]!.getAttribute("aria-current")).toBe("location");
+  });
+
+  it("opens the slide-in menu from the floating button", async () => {
+    render(<TableOfContents items={items} />);
+    act(() => {
+      fireEvent.click(screen.getByRole("button", { name: "Open: On this page" }));
+    });
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getAllByRole("link")).toHaveLength(3);
+    act(() => {
+      fireEvent.click(within(dialog).getByRole("button", { name: "Close" }));
+    });
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 });

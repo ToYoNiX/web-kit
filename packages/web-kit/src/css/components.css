@@ -111,6 +111,35 @@
   outline: var(--tx-border-width) solid var(--tx-border);
 }
 
+/* Narrow screens: app links get their own row under the logo, scrolling sideways if needed. */
+@media (max-width: 640px) {
+  .tx-header__inner {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    padding-top: 10px;
+    padding-bottom: 8px;
+    min-height: 0;
+  }
+
+  .tx-header__inner .tx-icon-btn {
+    margin-left: auto;
+  }
+
+  .tx-nav {
+    order: 3;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin-left: 0;
+    padding: 4px 3px 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tx-nav a {
+    flex: none;
+  }
+}
+
 .tx-subnav {
   border-bottom: var(--tx-border-width) solid var(--tx-border);
   background: var(--tx-surface);
@@ -891,9 +920,204 @@
   outline: var(--tx-border-width) solid var(--tx-border);
 }
 
+/* ============================== table of contents ============================== */
+
+/*
+ * Wide screens: article + sticky "On this page" column. Narrow screens: the column is hidden
+ * and a floating button opens the same list in a menu that slides in from the right.
+ */
+.tx-with-toc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 64px;
+  align-items: start;
+}
+
+.tx-toc {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .tx-with-toc {
+    grid-template-columns: minmax(0, 1fr) 240px;
+  }
+
+  .tx-toc {
+    display: block;
+    position: sticky;
+    top: 96px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding: 6px 4px 12px 0;
+  }
+
+  .tx-toc-trigger {
+    display: none !important;
+  }
+}
+
+.tx-toc__title {
+  margin-bottom: 18px;
+  font-size: 18px;
+}
+
+.tx-toc__list {
+  margin: 0;
+  padding: 0 0 0 14px;
+  border-left: var(--tx-border-width) solid var(--tx-border);
+  list-style: none;
+}
+
+.tx-toc__item {
+  margin: 0;
+}
+
+.tx-toc__item--sub {
+  padding-left: 14px;
+}
+
+.tx-toc__link {
+  display: block;
+  padding: 5px 0;
+  color: var(--tx-text-muted);
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.tx-toc__item--sub .tx-toc__link {
+  font-size: 13px;
+}
+
+.tx-toc__link:hover {
+  color: var(--tx-text);
+}
+
+.tx-toc__link[aria-current] {
+  color: var(--tx-text);
+  font-weight: 600;
+}
+
+/* The current section gets the marker highlight, like <em> in headlines. */
+.tx-toc__link[aria-current] .tx-toc__text {
+  background: linear-gradient(transparent 58%, var(--tx-accent) 58%, var(--tx-accent) 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.tx-toc-trigger {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 40;
+  font-size: 14px;
+}
+
+.tx-toc-overlay {
+  z-index: 60;
+}
+
+.tx-toc-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+  width: min(340px, 86vw);
+  padding: 20px 20px calc(24px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  border-left: var(--tx-border-width) solid var(--tx-border);
+  background: var(--tx-surface);
+  box-shadow: -6px 0 0 var(--tx-border);
+  color: var(--tx-text);
+}
+
+.tx-toc-drawer[data-state="open"] {
+  animation: tx-slide-in-right 0.22s ease-out;
+}
+
+.tx-toc-drawer[data-state="closed"] {
+  animation: tx-slide-out-right 0.16s ease-in;
+}
+
+.tx-toc-overlay[data-state="open"] {
+  animation: tx-fade-in 0.2s ease-out;
+}
+
+.tx-toc-overlay[data-state="closed"] {
+  animation: tx-fade-out 0.16s ease-in;
+}
+
+.tx-toc-drawer__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.tx-toc-drawer__close {
+  padding: 6px 12px;
+}
+
+.tx-toc-drawer .tx-toc__link {
+  padding: 10px 0; /* bigger tap targets */
+  font-size: 16px;
+}
+
+.tx-toc-drawer .tx-toc__item--sub .tx-toc__link {
+  font-size: 15px;
+}
+
+@keyframes tx-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes tx-slide-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes tx-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes tx-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Anchor jumps (table of contents, #links) land below the sticky header, not under it. */
+.tx-prose :is(h2, h3, h4) {
+  scroll-margin-top: 96px;
+}
+
+.tx-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* ============================== motion ============================== */
 
 @media (prefers-reduced-motion: reduce) {
+  .tx-toc-drawer,
+  .tx-toc-overlay {
+    animation: none !important;
+  }
+
   .tx-btn,
   .tx-card--link,
   .tx-switch,

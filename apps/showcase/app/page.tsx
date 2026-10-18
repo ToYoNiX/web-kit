@@ -41,6 +41,7 @@ import {
   Stack,
   Switch,
   Table,
+  TableOfContents,
   Tabs,
   TabsContent,
   TabsList,
@@ -51,6 +52,13 @@ import {
   Tooltip,
 } from "@toyonix/web-kit/react";
 import { appHref } from "@toyonix/web-kit";
+
+const TOC_DEMO = [
+  { id: "toc-why", text: "Why a table of contents", depth: 2 as const },
+  { id: "toc-wide", text: "On wide screens", depth: 2 as const },
+  { id: "toc-sticky", text: "It stays in view", depth: 3 as const },
+  { id: "toc-narrow", text: "On phones", depth: 2 as const },
+];
 
 const TOKENS = [
   "bg",
@@ -336,6 +344,28 @@ export default function Showcase() {
                 </TabsContent>
               </Tabs>
             </Stack>
+          </div>
+        </Section>
+
+        <Section>
+          <SectionLabel>Table of contents</SectionLabel>
+          <div className="tx-with-toc">
+            <Prose>
+              {TOC_DEMO.map((item) => {
+                const Heading = item.depth === 2 ? "h2" : "h3";
+                return (
+                  <div key={item.id}>
+                    <Heading id={item.id}>{item.text}</Heading>
+                    <p>
+                      On wide screens the list on the right stays in view and marks the section you&apos;re
+                      reading. On narrow screens it moves into a menu that slides in from the right, opened
+                      from the floating button.
+                    </p>
+                  </div>
+                );
+              })}
+            </Prose>
+            <TableOfContents items={TOC_DEMO} />
           </div>
         </Section>
 
