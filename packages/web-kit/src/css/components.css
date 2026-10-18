@@ -562,11 +562,14 @@
   font-style: italic;
 }
 
+/* Wide images span the column; tall ones are capped at most of the viewport and centered. */
 .tx-prose img {
   display: block;
+  width: auto;
   max-width: 100%;
   height: auto;
-  margin: 1.6em 0;
+  max-height: min(80vh, 900px);
+  margin: 1.6em auto;
   border: var(--tx-border-width) solid var(--tx-border);
   box-shadow: var(--tx-shadow);
 }
