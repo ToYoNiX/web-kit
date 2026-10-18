@@ -29,3 +29,6 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
+        env:
+          # Read-only token, so builds that query GitHub (the root site's registry) aren't rate-limited.
+          GITHUB_TOKEN: ${{ github.token }}
