@@ -1,5 +1,11 @@
 # @toyonix/web-kit
 
+## 0.1.3
+
+### Patch Changes
+
+- [#8](https://github.com/ToYoNiX/web-kit/pull/8) [`dab1a32`](https://github.com/ToYoNiX/web-kit/commit/dab1a32fc99127f3757a1c73bf6c0e73ddac1e80) Thanks [@ToYoNiX](https://github.com/ToYoNiX)! - Fix the `AppShell` header on phones: it stays on one row. The header is more compact on narrow screens so the app links fit next to the logo; when there are too many, they scroll sideways and the current app is scrolled into view (instead of always moving to a second row, as in 0.1.2).
+
 ## 0.1.2
 
 ### Patch Changes
