@@ -1,0 +1,10 @@
+/*
+ * @toyonix/web-kit/css: everything, framework-agnostic.
+ * Layer order matches Tailwind v4, so with Tailwind the kit slots in and utilities win.
+ */
+@layer theme, base, components, utilities;
+
+@import "./fonts.css";
+@import "./tokens.css" layer(theme);
+@import "./base.css" layer(base);
+@import "./components.css" layer(components);

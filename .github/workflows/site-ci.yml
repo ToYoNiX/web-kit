@@ -1,0 +1,31 @@
+# Reusable CI for toyonix sites. Sites call it from .github/workflows/ci.yml:
+#
+#   jobs:
+#     ci:
+#       uses: ToYoNiX/web-kit/.github/workflows/site-ci.yml@v0
+#
+# Inputs must stay backward compatible within a major tag (v0, v1, …): every site uses it.
+name: site-ci
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Float @toyonix/web-kit to the newest version in range
+        run: npm update @toyonix/web-kit && npm ls @toyonix/web-kit
+      - run: npm run format:check --if-present
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build

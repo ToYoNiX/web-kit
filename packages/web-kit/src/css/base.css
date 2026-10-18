@@ -1,0 +1,58 @@
+/*
+ * Element defaults. Loaded in the `base` cascade layer, so Tailwind utilities and app CSS
+ * always win. Sizes and margins are left to components (.tx-display, .tx-prose, …) so plain
+ * elements stay predictable.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--tx-bg);
+  color: var(--tx-text);
+  font-family: var(--tx-font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--tx-font-heading);
+  font-weight: var(--tx-heading-weight);
+  letter-spacing: var(--tx-heading-tracking);
+  text-transform: var(--tx-heading-transform);
+  line-height: 1.15;
+}
+
+a {
+  color: var(--tx-accent-text);
+  text-underline-offset: 3px;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--tx-font-mono);
+}
+
+::selection {
+  background: var(--tx-accent);
+  color: var(--tx-accent-contrast);
+}
+
+:focus-visible {
+  outline: var(--tx-border-width) solid var(--tx-ring);
+  outline-offset: 2px;
+}

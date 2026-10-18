@@ -1,0 +1,79 @@
+# Releases @toyonix/web-kit.
+#
+# 1. PRs with changesets merge into main → this opens/updates a "Release @toyonix/web-kit" PR.
+# 2. Merging that PR → this publishes to npm (trusted publishing, no token), tags vX.Y.Z,
+#    moves the major tag (v0, v1, …) that sites reference, creates a GitHub release, and
+#    redeploys every site through sync-sites.
+name: release
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
+      version: ${{ steps.publish.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+
+      - id: changesets
+        name: Open or update the release PR
+        uses: changesets/action@v2
+        with:
+          version-script: npm run version-packages
+          pr-title: Release @toyonix/web-kit
+          commit-message: "chore: release @toyonix/web-kit"
+
+      - id: publish
+        name: Publish if this version isn't on npm yet
+        if: steps.changesets.outputs.has-changesets == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p "require('./packages/web-kit/package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ "$version" = "0.0.0" ] || npm view "@toyonix/web-kit@$version" version >/dev/null 2>&1; then
+            echo "Nothing to publish ($version)."
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          npm run build
+          (cd packages/web-kit && npm publish --access public --provenance)
+
+          major="v${version%%.*}"
+          git tag "v$version"
+          git tag -f "$major"
+          git push origin "v$version"
+          git push -f origin "$major"
+
+          awk -v v="$version" '$0 == "## " v {found=1; next} /^## / && found {exit} found' \
+            packages/web-kit/CHANGELOG.md > notes.md
+          gh release create "v$version" --title "v$version" --notes-file notes.md
+          echo "published=true" >> "$GITHUB_OUTPUT"
+
+  sync-sites:
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    uses: ./.github/workflows/sync-sites.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
+    secrets: inherit

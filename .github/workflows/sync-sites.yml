@@ -1,0 +1,45 @@
+# Redeploys every toyonix site so they all pick up the latest kit at the same time.
+# Replaces per-site cron jobs: GitHub disables schedules in repos with no activity for 60 days.
+#
+# Runs after each kit release (called by release.yml), on demand, and weekly as a safety net.
+# Needs the SITES_DISPATCH_TOKEN secret: a fine-grained PAT with "Actions: read and write" on
+# the site repos.
+name: sync-sites
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Kit version to wait for on npm before redeploying
+        type: string
+        required: false
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Kit version to wait for on npm (optional)
+        type: string
+        required: false
+  schedule:
+    - cron: "17 6 * * 1" # Mondays 06:17 UTC
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-sites
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - run: node scripts/sync-sites.mjs
+        env:
+          GH_TOKEN: ${{ secrets.SITES_DISPATCH_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          KIT_VERSION: ${{ inputs.version }}

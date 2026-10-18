@@ -1,0 +1,66 @@
+/*
+ * Design tokens: Zine × Riso (spec §5).
+ *
+ * Token NAMES are the public contract. Renaming or removing one is a breaking change.
+ * Values may change in minor releases; that's how visual refinements reach every site.
+ *
+ * Colors use light-dark(): the active value follows `color-scheme`, which follows
+ * html[data-theme] (set by ThemeScript) or, with no JS, the OS preference.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* ---- color ---- */
+  --tx-bg: light-dark(#f3efe6, #0f1530);
+  --tx-surface: light-dark(#fbf8f1, #161d3d);
+  --tx-surface-2: light-dark(#e6e2f0, #212a52);
+  --tx-text: light-dark(#1d2a5c, #f1ede4);
+  --tx-text-muted: light-dark(#4e5a86, #a9b0d0);
+  --tx-border: var(--tx-text);
+  --tx-accent: light-dark(#ff48b0, #ff5cba);
+  --tx-accent-contrast: light-dark(#1d2a5c, #0f1530);
+  --tx-accent-text: light-dark(#c81d84, #ff7cc8);
+  --tx-accent-2: light-dark(#0078bf, #5fb4ff);
+  --tx-ring: var(--tx-accent);
+  --tx-code-bg: light-dark(#1d2a5c, color-mix(in srgb, #0f1530 65%, #000));
+  --tx-code-text: light-dark(#f3efe6, #f1ede4);
+  --tx-code-key: #ffe800;
+  --tx-code-string: #ff9fd2;
+  --tx-success: light-dark(#2f7a4a, #7fd19a);
+  --tx-warning: light-dark(#b7791f, #f0b35a);
+  --tx-danger: light-dark(#c8321e, #ff6b5e);
+  --tx-card-1: #ffe800;
+  --tx-card-2: #ff9fd2;
+  --tx-card-3: #8fc6f0;
+  --tx-on-card: #111111;
+
+  /* ---- type ---- */
+  --tx-font-heading: "Newsreader", Georgia, "Times New Roman", serif;
+  --tx-font-prose: var(--tx-font-heading);
+  --tx-font-sans: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --tx-font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --tx-heading-weight: 500;
+  --tx-heading-tracking: -0.02em;
+  --tx-heading-transform: none;
+
+  /* ---- shape ---- */
+  --tx-radius: 0px;
+  --tx-radius-sm: 0px;
+  --tx-radius-pill: 0px;
+  --tx-border-width: 2.5px;
+
+  /* ---- depth ---- */
+  --tx-shadow: 5px 5px 0 var(--tx-border);
+  --tx-shadow-hover: 8px 8px 0 var(--tx-border);
+  --tx-btn-shadow: 3px 3px 0 var(--tx-border);
+  --tx-hover-shift: -3px, -3px;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}

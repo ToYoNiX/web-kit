@@ -1,0 +1,58 @@
+# Reusable deploy to GitHub Pages for toyonix sites. Sites call it from
+# .github/workflows/deploy.yml (that file name is fixed: sync-sites dispatches it):
+#
+#   on:
+#     push: { branches: [main] }
+#     workflow_dispatch:
+#   permissions: { contents: read, pages: write, id-token: write }
+#   jobs:
+#     deploy:
+#       uses: ToYoNiX/web-kit/.github/workflows/site-deploy.yml@v0
+#
+# Only builds and deploys. Lint and format run in site-ci on PRs, so a new kit lint rule can
+# never block a deploy. A failed build leaves the previous version live.
+name: site-deploy
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Float @toyonix/web-kit to the newest version in range
+        run: npm update @toyonix/web-kit && npm ls @toyonix/web-kit
+      - id: pages
+        uses: actions/configure-pages@v6
+      - name: Build (static export to ./out)
+        run: npm run build
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,46 @@
+/*
+ * @toyonix/web-kit/tailwind.css: use after `@import "tailwindcss";`.
+ *
+ * Maps the kit tokens into Tailwind's theme and removes Tailwind's default palette, so apps
+ * can only use toyonix colors (`bg-surface`, `text-accent-text`, `border-border`, …).
+ */
+@import "./index.css";
+
+@theme inline {
+  --color-*: initial;
+  --color-white: #fff;
+  --color-black: #000;
+
+  --color-bg: var(--tx-bg);
+  --color-surface: var(--tx-surface);
+  --color-surface-2: var(--tx-surface-2);
+  --color-text: var(--tx-text);
+  --color-text-muted: var(--tx-text-muted);
+  --color-border: var(--tx-border);
+  --color-accent: var(--tx-accent);
+  --color-accent-contrast: var(--tx-accent-contrast);
+  --color-accent-text: var(--tx-accent-text);
+  --color-accent-2: var(--tx-accent-2);
+  --color-ring: var(--tx-ring);
+  --color-code-bg: var(--tx-code-bg);
+  --color-code-text: var(--tx-code-text);
+  --color-success: var(--tx-success);
+  --color-warning: var(--tx-warning);
+  --color-danger: var(--tx-danger);
+  --color-card-1: var(--tx-card-1);
+  --color-card-2: var(--tx-card-2);
+  --color-card-3: var(--tx-card-3);
+  --color-on-card: var(--tx-on-card);
+
+  --font-sans: var(--tx-font-sans);
+  --font-serif: var(--tx-font-heading);
+  --font-mono: var(--tx-font-mono);
+
+  --radius-tx: var(--tx-radius);
+
+  --shadow-tx: var(--tx-shadow);
+  --shadow-tx-hover: var(--tx-shadow-hover);
+  --shadow-tx-btn: var(--tx-btn-shadow);
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
