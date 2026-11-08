@@ -56,6 +56,38 @@ describe("AppShell", () => {
     expect(screen.getByRole("link", { name: "Brand New" }).getAttribute("href")).toBe("/brand-new/");
   });
 
+  it("leaves out an app that asks not to be in the nav", () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_ID", "brand-new");
+    render(
+      <AppShell registry={snapshot} appTitle="Brand New" appNav={false}>
+        content
+      </AppShell>,
+    );
+    const links = screen.getAllByRole("link").filter((a) => a.closest(".tx-nav"));
+    expect(links.map((a) => a.textContent)).toEqual(["Home", "Articles", "Gen"]);
+  });
+
+  it("doesn't add back an app the registry hides from the nav", () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_ID", "hidden");
+    const withHidden: Registry = {
+      ...snapshot,
+      apps: [
+        ...snapshot.apps,
+        {
+          id: "hidden",
+          title: "Hidden",
+          description: "",
+          path: "/hidden/",
+          status: "beta",
+          nav: false,
+          order: 30,
+        },
+      ],
+    };
+    render(<AppShell registry={withHidden}>content</AppShell>);
+    expect(screen.queryByRole("link", { name: "Hidden" })).toBeNull();
+  });
+
   it("adopts a newer registry from the session cache", async () => {
     vi.stubEnv("NEXT_PUBLIC_APP_ID", "root");
     const newer = { ...snapshot, generatedAt: "2026-10-19T00:00:00Z", apps: [...snapshot.apps] };
