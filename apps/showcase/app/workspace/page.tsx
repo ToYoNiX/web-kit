@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   ChevronDownIcon,
@@ -22,7 +22,6 @@ import {
   IconButton,
   Input,
   Kbd,
-  MoveIcon,
   PanelLeftIcon,
   PanelRightIcon,
   PlusIcon,
@@ -46,9 +45,20 @@ import {
   Workspace,
   WorkspaceBody,
   WorkspaceMain,
+  CircleIcon,
+  FitIcon,
+  HandIcon,
+  PillIcon,
+  RectangleIcon,
+  RoundedRectangleIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
+  type CanvasApi,
+  type CanvasPoint,
   type TreeListItem,
 } from "@toyonix/web-kit/react";
 import { CodeEditor } from "./code-editor";
+import { ShapeCanvas } from "./shape-canvas";
 
 const YAML = `# A config drives the canvas; edits on the canvas write back here.
 outlines:
@@ -99,9 +109,11 @@ function moveLayer(items: TreeListItem[], id: string, index: number): TreeListIt
 export default function WorkspaceDemo() {
   const [left, setLeft] = useState(true);
   const [right, setRight] = useState(true);
-  const [tool, setTool] = useState("select");
+  const [tool, setTool] = useState<"select" | "pan">("select");
   const [operation, setOperation] = useState("add");
-  const [cursor, setCursor] = useState({ x: 0, y: 0 });
+  const [cursor, setCursor] = useState<CanvasPoint | null>(null);
+  const [zoom, setZoom] = useState<number | null>(null);
+  const canvas = useRef<CanvasApi>(null);
   const [layers, setLayers] = useState(LAYERS);
   const [layer, setLayer] = useState<string | null>("board");
 
@@ -147,7 +159,22 @@ export default function WorkspaceDemo() {
         </ToolbarButton>
         <ToolbarButton asChild>
           <IconButton label="Pan" shortcut="H" pressed={tool === "pan"} onClick={() => setTool("pan")}>
-            <MoveIcon />
+            <HandIcon />
+          </IconButton>
+        </ToolbarButton>
+        <ToolbarButton asChild>
+          <IconButton label="Zoom out" onClick={() => canvas.current?.zoomOut()}>
+            <ZoomOutIcon />
+          </IconButton>
+        </ToolbarButton>
+        <ToolbarButton asChild>
+          <IconButton label="Zoom in" onClick={() => canvas.current?.zoomIn()}>
+            <ZoomInIcon />
+          </IconButton>
+        </ToolbarButton>
+        <ToolbarButton asChild>
+          <IconButton label="Fit the drawing" onClick={() => canvas.current?.fit()}>
+            <FitIcon />
           </IconButton>
         </ToolbarButton>
         <DropdownMenu>
@@ -159,8 +186,10 @@ export default function WorkspaceDemo() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-72">
             <DropdownMenuLabel>Shapes</DropdownMenuLabel>
-            <DropdownMenuItem icon={<PlusIcon />}>Rectangle</DropdownMenuItem>
-            <DropdownMenuItem icon={<PlusIcon />}>Circle</DropdownMenuItem>
+            <DropdownMenuItem icon={<RectangleIcon />}>Rectangle</DropdownMenuItem>
+            <DropdownMenuItem icon={<RoundedRectangleIcon />}>Rounded rectangle</DropdownMenuItem>
+            <DropdownMenuItem icon={<CircleIcon />}>Circle</DropdownMenuItem>
+            <DropdownMenuItem icon={<PillIcon />}>Pill / slot</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Presets</DropdownMenuLabel>
             <DropdownMenuItem icon={<PlusIcon />} description="nice!nano / Pro Micro">
@@ -211,20 +240,8 @@ export default function WorkspaceDemo() {
         <WorkspaceMain>
           <ContextMenu>
             <ContextMenuTrigger asChild>
-              <div
-                className="grid flex-1 place-items-center bg-bg text-text-muted"
-                style={{
-                  backgroundImage: "radial-gradient(var(--tx-text-muted) 1px, transparent 1px)",
-                  backgroundSize: "20px 20px",
-                }}
-                onPointerMove={(event) => {
-                  const box = event.currentTarget.getBoundingClientRect();
-                  setCursor({ x: event.clientX - box.left, y: event.clientY - box.top });
-                }}
-              >
-                <div className="border-[2.5px] border-accent bg-surface px-6 py-10 font-mono text-sm">
-                  canvas · right-click for actions
-                </div>
+              <div className="flex min-h-0 flex-1">
+                <ShapeCanvas ref={canvas} tool={tool} onCursorMove={setCursor} onZoom={setZoom} />
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent className="w-60">
@@ -296,10 +313,10 @@ export default function WorkspaceDemo() {
       </WorkspaceBody>
 
       <StatusBar>
-        <span>
-          x {cursor.x.toFixed(0)} · y {cursor.y.toFixed(0)} px
-        </span>
+        <span>{cursor ? `x ${cursor.x.toFixed(1)} · y ${cursor.y.toFixed(1)} mm` : "x – · y –"}</span>
         <span>tool: {tool}</span>
+        {/* 100% is real size: 1 mm is 96 / 25.4 px on a standard screen. */}
+        <span>{zoom ? `${Math.round((zoom / (96 / 25.4)) * 100)}%` : "fit"}</span>
         <Spacer />
         <span>Alt 1 / Alt 2 toggle the panels</span>
       </StatusBar>

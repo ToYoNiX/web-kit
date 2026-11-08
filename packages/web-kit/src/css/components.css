@@ -1949,3 +1949,142 @@
   padding-bottom: 5px;
   font-size: 13px;
 }
+
+/* ---------------------------------------------------------------- canvas */
+
+.tx-canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--tx-surface);
+  touch-action: none;
+  user-select: none;
+}
+
+.tx-canvas[data-tool="pan"],
+.tx-canvas[data-space] {
+  cursor: grab;
+}
+
+.tx-canvas[data-panning] {
+  cursor: grabbing;
+}
+
+.tx-canvas__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tx-canvas__grid {
+  pointer-events: none;
+}
+
+.tx-canvas__dot {
+  fill: var(--tx-text);
+  opacity: 0.32;
+}
+
+/*
+ * Classes for what apps draw. Strokes keep their width on screen at any zoom.
+ * - ink: the drawing itself (add data-hoverable to highlight it under the pointer)
+ * - ref: a faint reference layer, behind the drawing
+ * - selected: the selection, in accent with a light fill
+ * - ghost: where a dragged shape started, in the second accent
+ */
+.tx-canvas__ink {
+  fill: none;
+  stroke: var(--tx-text);
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.tx-canvas__ink[data-hoverable] {
+  cursor: pointer;
+  pointer-events: visibleStroke;
+}
+
+.tx-canvas__ink[data-hoverable]:hover,
+.tx-canvas__hover {
+  stroke: var(--tx-accent-2);
+  stroke-width: 3px;
+}
+
+.tx-canvas__ref {
+  fill: none;
+  stroke: var(--tx-text-muted);
+  stroke-width: 1px;
+  stroke-dasharray: 3 3;
+  opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.tx-canvas__selected {
+  fill: color-mix(in srgb, var(--tx-accent) 14%, transparent);
+  stroke: var(--tx-accent);
+  stroke-width: 2.5px;
+  vector-effect: non-scaling-stroke;
+  cursor: move;
+}
+
+.tx-canvas__ghost {
+  fill: none;
+  stroke: var(--tx-accent-2);
+  stroke-width: 1.5px;
+  stroke-dasharray: 6 4;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+/* Handles: paper squares with the kit's hard shadow; corner handles are blue diamonds. */
+.tx-canvas__handle-shadow {
+  fill: var(--tx-border);
+}
+
+.tx-canvas__handle-face {
+  fill: var(--tx-surface);
+  stroke: var(--tx-border);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.tx-canvas__handle:hover .tx-canvas__handle-face {
+  fill: var(--tx-accent);
+}
+
+.tx-canvas__corner {
+  fill: var(--tx-accent-2);
+  stroke: var(--tx-border);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+}
+
+.tx-canvas__corner:hover {
+  fill: var(--tx-accent);
+}
+
+.tx-canvas__label {
+  pointer-events: none;
+}
+
+.tx-canvas__label rect {
+  fill: var(--tx-text);
+}
+
+.tx-canvas__label text {
+  fill: var(--tx-bg);
+  font-family: var(--tx-font-mono);
+}
+
+.tx-canvas__label--accent rect {
+  fill: var(--tx-accent);
+}
+
+.tx-canvas__label--accent text {
+  fill: var(--tx-accent-contrast);
+}

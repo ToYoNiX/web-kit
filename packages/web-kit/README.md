@@ -96,6 +96,26 @@ new width when the drag ends, so you can keep it (e.g. in `storage.app`) and pas
 `TreeList` shows nested rows (layers, parts) with one selected; give it `onMove` and rows can be
 reordered among their siblings by dragging or with Alt+↑/↓.
 
+`Canvas` is a drawing surface for a `WorkspaceMain`: SVG content in world units (e.g. mm) that
+the user pans (Hand tool, middle-drag or Space+drag) and zooms (wheel, around the pointer) over
+a dot grid. It fits `bounds` until the user moves the view; its `ref` has `fit()`, `zoomIn()`,
+`zoomOut()` and `toWorld()`. The kit draws only the grid; the app draws its shapes as children
+with the `tx-canvas__ink`, `__ref`, `__selected` and `__ghost` classes, and uses
+`CanvasResizeHandle`, `CanvasCornerHandle` and `CanvasLabel` (same size on screen at any zoom)
+and `useCanvasDrag` (drag distances in world units, snapped, Escape cancels). Like `useCanvas`,
+`useCanvasDrag` reads the canvas it's in, so call it in a component rendered inside `<Canvas>`:
+
+```tsx
+function Box({ box, onMove }) {
+  const drag = useCanvasDrag({ snap: 0.5, onMove: (delta) => onMove(delta) });
+  return <rect className="tx-canvas__selected" {...box} {...drag} />;
+}
+
+<Canvas aria-label="Drawing" bounds={{ x: 0, y: 0, width: 140, height: 120 }} ref={canvas}>
+  <Box box={box} onMove={…} />
+</Canvas>
+```
+
 ## Rules for sites
 
 - Use tokens (`bg-surface`, `text-accent-text`, `var(--tx-accent)`), never hard-coded colors.

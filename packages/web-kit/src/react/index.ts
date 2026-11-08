@@ -90,6 +90,21 @@ export { ToggleGroup, ToggleGroupItem } from "./ToggleGroup";
 export { TreeList, type TreeListItem, type TreeListProps } from "./TreeList";
 
 // tool pages (use with <AppShell layout="app">)
+export {
+  Canvas,
+  CanvasCornerHandle,
+  CanvasLabel,
+  CanvasResizeHandle,
+  snapTo,
+  useCanvas,
+  useCanvasDrag,
+  type CanvasApi,
+  type CanvasBounds,
+  type CanvasDragOptions,
+  type CanvasPoint,
+  type CanvasProps,
+  type CanvasView,
+} from "./Canvas";
 export { Toolbar, ToolbarButton, ToolbarSeparator, type ToolbarButtonProps } from "./Toolbar";
 export {
   SidePanel,
