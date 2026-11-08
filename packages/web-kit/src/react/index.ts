@@ -87,8 +87,24 @@ export type { MenuItemExtras } from "./menu-item";
 export { Tooltip, type TooltipProps } from "./Tooltip";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
 export { ToggleGroup, ToggleGroupItem } from "./ToggleGroup";
+export { moveTreeItem, TreeList, type TreeListItem, type TreeListProps } from "./TreeList";
 
 // tool pages (use with <AppShell layout="app">)
+export {
+  Canvas,
+  CanvasCornerHandle,
+  CanvasLabel,
+  CanvasResizeHandle,
+  snapTo,
+  useCanvas,
+  useCanvasDrag,
+  type CanvasApi,
+  type CanvasBounds,
+  type CanvasDragOptions,
+  type CanvasPoint,
+  type CanvasProps,
+  type CanvasView,
+} from "./Canvas";
 export { Toolbar, ToolbarButton, ToolbarSeparator, type ToolbarButtonProps } from "./Toolbar";
 export {
   SidePanel,
@@ -106,22 +122,35 @@ export {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  CircleIcon,
   CloseIcon,
   CopyIcon,
+  CornerIcon,
   CursorIcon,
   DownloadIcon,
   ExternalLinkIcon,
   EyeIcon,
   EyeOffIcon,
+  FitIcon,
+  GridIcon,
+  HandIcon,
+  LayersIcon,
   LinkIcon,
+  MagnetIcon,
   MenuIcon,
   MinusIcon,
   MoreIcon,
   MoveIcon,
   PanelLeftIcon,
   PanelRightIcon,
+  PathIcon,
+  PillIcon,
   PlusIcon,
+  PolygonIcon,
+  RectangleIcon,
   RedoIcon,
+  RotateIcon,
+  RoundedRectangleIcon,
   SearchIcon,
   TrashIcon,
   UndoIcon,

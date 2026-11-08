@@ -322,6 +322,82 @@ describe("SidePanel", () => {
     // Assert
     expect(aside.getAttribute("data-state")).toBe("open");
   });
+
+  it("has no resize handle unless asked for one", () => {
+    // Arrange / Act
+    render(panel());
+
+    // Assert
+    expect(screen.queryByRole("separator")).toBeNull();
+  });
+
+  it("resizes from the keyboard within its limits and reports the width", () => {
+    // Arrange
+    const onWidthChange = vi.fn();
+    render(panel({ resizable: true, width: 300, minWidth: 250, maxWidth: 330, onWidthChange }));
+    const handle = screen.getByRole("separator", { name: "Resize YAML" });
+    const aside = screen.getByRole("complementary", { name: "YAML" });
+
+    // Act: a left panel grows to the right
+    fireEvent.keyDown(handle, { key: "ArrowRight" });
+
+    // Assert
+    expect(onWidthChange).toHaveBeenLastCalledWith(316);
+    expect(aside.style.getPropertyValue("--tx-side-panel-width")).toBe("316px");
+    expect(handle.getAttribute("aria-valuenow")).toBe("316");
+    expect(handle.getAttribute("aria-valuemin")).toBe("250");
+    expect(handle.getAttribute("aria-valuemax")).toBe("330");
+
+    // Act: clamped at both ends
+    fireEvent.keyDown(handle, { key: "ArrowRight", shiftKey: true });
+    const atMax = aside.style.getPropertyValue("--tx-side-panel-width");
+    fireEvent.keyDown(handle, { key: "Home" });
+
+    // Assert
+    expect(atMax).toBe("330px");
+    expect(onWidthChange).toHaveBeenLastCalledWith(250);
+  });
+
+  it("resizes by dragging its inner edge; a right panel grows to the left", () => {
+    // Arrange
+    const onWidthChange = vi.fn();
+    render(panel({ side: "right", resizable: true, width: 300, onWidthChange }));
+    const handle = screen.getByRole("separator", { name: "Resize YAML" });
+    const aside = screen.getByRole("complementary", { name: "YAML" });
+
+    // Act
+    fireEvent.pointerDown(handle, { button: 0, clientX: 500, pointerId: 1 });
+    fireEvent.pointerMove(handle, { clientX: 440, pointerId: 1 });
+    const whileDragging = aside.style.getPropertyValue("--tx-side-panel-width");
+    const reportedWhileDragging = onWidthChange.mock.calls.length;
+    fireEvent.pointerUp(handle, { clientX: 440, pointerId: 1 });
+
+    // Assert: live while dragging, reported once at the end
+    expect(whileDragging).toBe("360px");
+    expect(aside.hasAttribute("data-resizing")).toBe(false);
+    expect(reportedWhileDragging).toBe(0);
+    expect(onWidthChange).toHaveBeenCalledTimes(1);
+    expect(onWidthChange).toHaveBeenCalledWith(360);
+  });
+
+  it("goes back to the app's width on double-click, and follows a new width from the app", () => {
+    // Arrange
+    const onWidthChange = vi.fn();
+    const { rerender } = render(panel({ resizable: true, width: 300, onWidthChange }));
+    const handle = screen.getByRole("separator", { name: "Resize YAML" });
+    const aside = screen.getByRole("complementary", { name: "YAML" });
+    fireEvent.keyDown(handle, { key: "End" });
+
+    // Act
+    fireEvent.doubleClick(handle);
+    const afterReset = aside.style.getPropertyValue("--tx-side-panel-width");
+    rerender(panel({ resizable: true, width: 420, onWidthChange }));
+
+    // Assert
+    expect(afterReset).toBe("300px");
+    expect(onWidthChange).toHaveBeenLastCalledWith(300);
+    expect(aside.style.getPropertyValue("--tx-side-panel-width")).toBe("420px");
+  });
 });
 
 describe("@toyonix/web-kit/codemirror", () => {

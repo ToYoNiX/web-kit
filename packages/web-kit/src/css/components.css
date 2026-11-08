@@ -1647,6 +1647,66 @@
   outline-offset: -5px;
 }
 
+/* Resizable panels: an invisible strip on the inner edge that shows an accent bar when used. */
+.tx-side-panel__resize {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.tx-side-panel--left .tx-side-panel__resize {
+  right: 0;
+}
+
+.tx-side-panel--right .tx-side-panel__resize {
+  left: 0;
+}
+
+.tx-side-panel__resize::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--tx-accent);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.tx-side-panel--left .tx-side-panel__resize::after {
+  right: 0;
+}
+
+.tx-side-panel--right .tx-side-panel__resize::after {
+  left: 0;
+}
+
+.tx-side-panel__resize:hover::after,
+.tx-side-panel__resize:focus-visible::after,
+.tx-side-panel[data-resizing] .tx-side-panel__resize::after {
+  opacity: 1;
+}
+
+.tx-side-panel__resize:focus-visible {
+  outline: none;
+}
+
+/* While resizing, the edge follows the pointer exactly (no slide), everywhere on the page. */
+.tx-side-panel[data-resizing],
+.tx-side-panel[data-resizing] .tx-side-panel__content {
+  transition: none;
+}
+
+.tx-resizing,
+.tx-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
 /* Narrow screens: the tab stays in place and an open panel slides in over the main area. */
 @media (max-width: 760px) {
   .tx-side-panel,
@@ -1691,6 +1751,11 @@
   .tx-side-panel__tab {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  /* The panel opens over the page here, at a fixed width. */
+  .tx-side-panel__resize {
+    display: none;
   }
 }
 
@@ -1777,4 +1842,249 @@
 .tx-main {
   display: block;
   min-height: 50vh;
+}
+
+/* ---------------------------------------------------------------- tree list */
+
+.tx-tree-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--tx-border-width) solid var(--tx-border);
+  background: var(--tx-surface);
+}
+
+.tx-tree-list__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px 7px calc(10px + var(--tx-tree-depth, 0) * 16px);
+  border-bottom: 1px solid color-mix(in srgb, var(--tx-border) 20%, transparent);
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tx-tree-list__item:last-child {
+  border-bottom: 0;
+}
+
+.tx-tree-list__item:hover {
+  background: var(--tx-surface-2);
+}
+
+.tx-tree-list__item:focus-visible {
+  outline: 2px solid var(--tx-text);
+  outline-offset: -4px;
+}
+
+.tx-tree-list__item[aria-selected="true"] {
+  background: var(--tx-accent);
+  color: var(--tx-accent-contrast);
+}
+
+.tx-tree-list__item[aria-disabled="true"] {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.tx-tree-list__item[draggable="true"] {
+  cursor: grab;
+}
+
+.tx-tree-list__item[data-dragging] {
+  opacity: 0.45;
+}
+
+/* Where a dragged row will land. */
+.tx-tree-list__item[data-drop="before"] {
+  box-shadow: inset 0 3px 0 var(--tx-accent);
+}
+
+.tx-tree-list__item[data-drop="after"] {
+  box-shadow: inset 0 -3px 0 var(--tx-accent);
+}
+
+/* On the pink selected row, the drop line is drawn in ink so it still shows. */
+.tx-tree-list__item[aria-selected="true"][data-drop="before"] {
+  box-shadow: inset 0 3px 0 var(--tx-text);
+}
+
+.tx-tree-list__item[aria-selected="true"][data-drop="after"] {
+  box-shadow: inset 0 -3px 0 var(--tx-text);
+}
+
+.tx-tree-list__leading {
+  flex: none;
+  width: 1.2em;
+  font-family: var(--tx-font-mono);
+  font-weight: 700;
+  text-align: center;
+}
+
+.tx-tree-list__label {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--tx-font-mono);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tx-tree-list__meta {
+  flex: none;
+  margin-left: auto;
+  color: var(--tx-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.tx-tree-list__item[aria-selected="true"] .tx-tree-list__meta {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.tx-compact .tx-tree-list__item {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- canvas */
+
+.tx-canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--tx-surface);
+  touch-action: none;
+  user-select: none;
+}
+
+.tx-canvas[data-tool="pan"],
+.tx-canvas[data-space] {
+  cursor: grab;
+}
+
+.tx-canvas[data-panning] {
+  cursor: grabbing;
+}
+
+.tx-canvas__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tx-canvas__grid {
+  pointer-events: none;
+}
+
+.tx-canvas__dot {
+  fill: var(--tx-text);
+  opacity: 0.32;
+}
+
+/*
+ * Classes for what apps draw. Strokes keep their width on screen at any zoom.
+ * - ink: the drawing itself (add data-hoverable to highlight it under the pointer)
+ * - ref: a faint reference layer, behind the drawing
+ * - selected: the selection, in accent with a light fill
+ * - ghost: where a dragged shape started, in the second accent
+ */
+.tx-canvas__ink {
+  fill: none;
+  stroke: var(--tx-text);
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.tx-canvas__ink[data-hoverable] {
+  cursor: pointer;
+  pointer-events: visibleStroke;
+}
+
+.tx-canvas__ink[data-hoverable]:hover,
+.tx-canvas__hover {
+  stroke: var(--tx-accent-2);
+  stroke-width: 3px;
+}
+
+.tx-canvas__ref {
+  fill: none;
+  stroke: var(--tx-text-muted);
+  stroke-width: 1px;
+  stroke-dasharray: 3 3;
+  opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.tx-canvas__selected {
+  fill: color-mix(in srgb, var(--tx-accent) 14%, transparent);
+  stroke: var(--tx-accent);
+  stroke-width: 2.5px;
+  vector-effect: non-scaling-stroke;
+  cursor: move;
+}
+
+.tx-canvas__ghost {
+  fill: none;
+  stroke: var(--tx-accent-2);
+  stroke-width: 1.5px;
+  stroke-dasharray: 6 4;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+/* Handles: paper squares with the kit's hard shadow; corner handles are blue diamonds. */
+.tx-canvas__handle-shadow {
+  fill: var(--tx-border);
+}
+
+.tx-canvas__handle-face {
+  fill: var(--tx-surface);
+  stroke: var(--tx-border);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.tx-canvas__handle:hover .tx-canvas__handle-face {
+  fill: var(--tx-accent);
+}
+
+.tx-canvas__corner {
+  fill: var(--tx-accent-2);
+  stroke: var(--tx-border);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+}
+
+.tx-canvas__corner:hover {
+  fill: var(--tx-accent);
+}
+
+.tx-canvas__label {
+  pointer-events: none;
+}
+
+.tx-canvas__label rect {
+  fill: var(--tx-text);
+}
+
+.tx-canvas__label text {
+  fill: var(--tx-bg);
+  font-family: var(--tx-font-mono);
+}
+
+.tx-canvas__label--accent rect {
+  fill: var(--tx-accent);
+}
+
+.tx-canvas__label--accent text {
+  fill: var(--tx-accent-contrast);
 }
