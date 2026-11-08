@@ -1,5 +1,38 @@
 # @toyonix/web-kit
 
+## 0.1.6
+
+### Patch Changes
+
+- [#15](https://github.com/ToYoNiX/web-kit/pull/15) [`bda1a5f`](https://github.com/ToYoNiX/web-kit/commit/bda1a5f776a503efcb0a11730555b14d759e3762) Thanks [@ToYoNiX](https://github.com/ToYoNiX)! - 13 more icons for canvas tools and shapes: `HandIcon` (pan), `FitIcon`, `GridIcon`,
+  `MagnetIcon` (snap), `RotateIcon`, `LayersIcon`, `CornerIcon` (corner radius),
+  `RectangleIcon`, `RoundedRectangleIcon`, `CircleIcon`, `PolygonIcon`, `PillIcon` and `PathIcon`.
+
+- [#15](https://github.com/ToYoNiX/web-kit/pull/15) [`80c8b59`](https://github.com/ToYoNiX/web-kit/commit/80c8b59e737250646d5fd6b524bfa216463fdccd) Thanks [@ToYoNiX](https://github.com/ToYoNiX)! - `Canvas`: a drawing surface for tool pages. SVG content in world units (e.g. mm), panned with
+  the `tool="pan"` mode, middle-drag or Space+drag, and zoomed with the wheel around the pointer
+  (or `wheel="pan"` to scroll, Ctrl+wheel and pinch to zoom), over a dot grid that thins out when
+  zoomed out. It fits `bounds` until the user moves the view, can be controlled (`view` /
+  `onViewChange`), reports the pointer in world units (`onCursorMove`), and its `ref` has
+  `fit()`, `zoomIn()`, `zoomOut()` and `toWorld()`.
+  
+  For what apps draw on it: `useCanvasDrag` (drag distances in world units, snapped, Shift for free
+  movement, Escape cancels), `useCanvas`, `snapTo`, handles that keep their size on screen
+  (`CanvasResizeHandle`, `CanvasCornerHandle`, `CanvasLabel`), and the classes
+  `tx-canvas__ink`, `__ref`, `__selected` and `__ghost`.
+
+- [#15](https://github.com/ToYoNiX/web-kit/pull/15) [`819b95d`](https://github.com/ToYoNiX/web-kit/commit/819b95daf76bda9c262ae9438ae419b1c18b2fe3) Thanks [@ToYoNiX](https://github.com/ToYoNiX)! - `SidePanel` can be resized: add `resizable` and the user drags the panel's inner edge (or,
+  focused, uses the arrow keys, Home and End; Shift for bigger steps). A double-click on the edge
+  goes back to the `width` you set. Optional `minWidth` / `maxWidth` (default 220 / 720 px) and
+  `onWidthChange`, called once when a resize ends, so the app can remember the width. Off by
+  default; narrow screens keep the fixed-width overlay.
+
+- [#15](https://github.com/ToYoNiX/web-kit/pull/15) [`d1ebfa3`](https://github.com/ToYoNiX/web-kit/commit/d1ebfa381e19ac659db2c22480bd5f7cd124481a) Thanks [@ToYoNiX](https://github.com/ToYoNiX)! - `TreeList`: rows with nesting, such as the layers or parts of a drawing. Items are a flat list
+  in display order with a `depth`, an optional `leading` symbol and muted `meta`. One row is
+  selected (`selected` / `onSelect`; ↑/↓, Home and End move it). With `onMove`, rows can be
+  reordered among their siblings by dragging or with Alt+↑/↓; `onMove(id, index)` gives the new
+  position among the siblings. An ARIA tree with roving focus. `moveTreeItem(items, id, index)` applies a move to a
+  list of items, for apps that keep the rows in their own state.
+
 ## 0.1.5
 
 ### Patch Changes
