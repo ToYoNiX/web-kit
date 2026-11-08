@@ -85,6 +85,14 @@ build the page from the kit:
 
 The kit shows shortcuts (`shortcut` props, `<Kbd>`) but never binds keys: the app does.
 
+Side panels can be resizable: the user drags the inner edge, and `onWidthChange` reports the
+new width when the drag ends, so you can keep it (e.g. in `storage.app`) and pass it back as
+`width`:
+
+```tsx
+<SidePanel side="left" title="Config" resizable width={width} onWidthChange={setWidth}>
+```
+
 ## Rules for sites
 
 - Use tokens (`bg-surface`, `text-accent-text`, `var(--tx-accent)`), never hard-coded colors.

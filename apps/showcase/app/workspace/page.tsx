@@ -157,7 +157,15 @@ export default function WorkspaceDemo() {
       </Toolbar>
 
       <WorkspaceBody>
-        <SidePanel side="left" title="YAML" width={380} open={left} onOpenChange={setLeft} shortcut="Alt 1">
+        <SidePanel
+          side="left"
+          title="YAML"
+          width={380}
+          resizable
+          open={left}
+          onOpenChange={setLeft}
+          shortcut="Alt 1"
+        >
           <CodeEditor doc={YAML} label="Config" />
         </SidePanel>
 
@@ -190,7 +198,14 @@ export default function WorkspaceDemo() {
           </ContextMenu>
         </WorkspaceMain>
 
-        <SidePanel side="right" title="Controls" open={right} onOpenChange={setRight} shortcut="Alt 2">
+        <SidePanel
+          side="right"
+          title="Controls"
+          resizable
+          open={right}
+          onOpenChange={setRight}
+          shortcut="Alt 2"
+        >
           <Tabs defaultValue="shape" className="p-3.5">
             <TabsList>
               <TabsTrigger value="shape">Shape</TabsTrigger>

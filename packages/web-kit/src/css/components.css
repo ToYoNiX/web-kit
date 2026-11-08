@@ -1647,6 +1647,66 @@
   outline-offset: -5px;
 }
 
+/* Resizable panels: an invisible strip on the inner edge that shows an accent bar when used. */
+.tx-side-panel__resize {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.tx-side-panel--left .tx-side-panel__resize {
+  right: 0;
+}
+
+.tx-side-panel--right .tx-side-panel__resize {
+  left: 0;
+}
+
+.tx-side-panel__resize::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--tx-accent);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.tx-side-panel--left .tx-side-panel__resize::after {
+  right: 0;
+}
+
+.tx-side-panel--right .tx-side-panel__resize::after {
+  left: 0;
+}
+
+.tx-side-panel__resize:hover::after,
+.tx-side-panel__resize:focus-visible::after,
+.tx-side-panel[data-resizing] .tx-side-panel__resize::after {
+  opacity: 1;
+}
+
+.tx-side-panel__resize:focus-visible {
+  outline: none;
+}
+
+/* While resizing, the edge follows the pointer exactly (no slide), everywhere on the page. */
+.tx-side-panel[data-resizing],
+.tx-side-panel[data-resizing] .tx-side-panel__content {
+  transition: none;
+}
+
+.tx-resizing,
+.tx-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
 /* Narrow screens: the tab stays in place and an open panel slides in over the main area. */
 @media (max-width: 760px) {
   .tx-side-panel,
@@ -1691,6 +1751,11 @@
   .tx-side-panel__tab {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  /* The panel opens over the page here, at a fixed width. */
+  .tx-side-panel__resize {
+    display: none;
   }
 }
 
