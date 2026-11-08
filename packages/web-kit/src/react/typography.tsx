@@ -44,3 +44,8 @@ export function Prose({
 }: ComponentPropsWithoutRef<"article"> & { as?: "article" | "div" | "section"; dropcap?: boolean }) {
   return <Tag className={cx("tx-prose", dropcap && "tx-prose--dropcap", className)} {...props} />;
 }
+
+/** A keyboard shortcut, e.g. <Kbd>Ctrl ⏎</Kbd>. */
+export function Kbd({ className, ...props }: ComponentProps<"kbd">) {
+  return <kbd className={cx("tx-kbd", className)} {...props} />;
+}

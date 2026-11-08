@@ -12,8 +12,8 @@ export { useTheme, type ThemeState } from "./use-theme";
 export { useRegistry } from "./use-registry";
 
 // layout & type
-export { Container, Row, Section, Stack } from "./layout";
-export { Display, Eyebrow, Lead, Mark, Prose, SectionLabel } from "./typography";
+export { Container, Row, Section, Spacer, Stack } from "./layout";
+export { Display, Eyebrow, Kbd, Lead, Mark, Prose, SectionLabel } from "./typography";
 
 // primitives
 export {
@@ -21,6 +21,7 @@ export {
   ButtonRow,
   LinkButton,
   type ButtonProps,
+  type ButtonSize,
   type ButtonVariant,
   type LinkButtonProps,
 } from "./Button";
@@ -37,7 +38,8 @@ export {
 } from "./Card";
 export { Badge, Badges, Tag, Tags, type BadgeTone } from "./Badge";
 export { Alert, type AlertTone } from "./Alert";
-export { Checkbox, Field, Form, Input, Radio, Select, Switch, Textarea } from "./form";
+export { Checkbox, Field, Form, Input, Radio, Select, Switch, Textarea, type InputProps } from "./form";
+export { IconButton, type IconButtonProps } from "./IconButton";
 export { Table } from "./Table";
 export { CodeBlock } from "./CodeBlock";
 
@@ -45,15 +47,89 @@ export { CodeBlock } from "./CodeBlock";
 export { Dialog, DialogClose, DialogContent, DialogTrigger, type DialogContentProps } from "./Dialog";
 export {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  type DropdownMenuCheckboxItemProps,
+  type DropdownMenuItemProps,
+  type DropdownMenuRadioItemProps,
+  type DropdownMenuSubTriggerProps,
 } from "./DropdownMenu";
+export {
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuGroup,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+  type ContextMenuCheckboxItemProps,
+  type ContextMenuItemProps,
+  type ContextMenuRadioItemProps,
+  type ContextMenuSubTriggerProps,
+} from "./ContextMenu";
+export type { MenuItemExtras } from "./menu-item";
 export { Tooltip, type TooltipProps } from "./Tooltip";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
+export { ToggleGroup, ToggleGroupItem } from "./ToggleGroup";
+
+// tool pages (use with <AppShell layout="app">)
+export { Toolbar, ToolbarButton, ToolbarSeparator, type ToolbarButtonProps } from "./Toolbar";
+export {
+  SidePanel,
+  StatusBar,
+  Workspace,
+  WorkspaceBody,
+  WorkspaceMain,
+  type SidePanelProps,
+} from "./Workspace";
+
+// icons (decorative: label the button around them)
+export {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  CloseIcon,
+  CopyIcon,
+  CursorIcon,
+  DownloadIcon,
+  ExternalLinkIcon,
+  EyeIcon,
+  EyeOffIcon,
+  LinkIcon,
+  MenuIcon,
+  MinusIcon,
+  MoreIcon,
+  MoveIcon,
+  PanelLeftIcon,
+  PanelRightIcon,
+  PlusIcon,
+  RedoIcon,
+  SearchIcon,
+  TrashIcon,
+  UndoIcon,
+  UploadIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
+  type IconProps,
+} from "./icons";
 
 // articles
 export { TableOfContents, type TableOfContentsProps, type TocItem } from "./TableOfContents";

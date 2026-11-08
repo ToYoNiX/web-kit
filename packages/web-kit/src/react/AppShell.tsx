@@ -16,13 +16,32 @@ export interface AppShellProps {
   nav?: ReactNode;
   /** Replaces the default footer content. */
   footer?: ReactNode;
+  /**
+   * `page` (default): header, content, footer, and the window scrolls.
+   * `app`: a full-window tool page. No footer; `main` fills the window below the header and
+   * never scrolls itself, so the app lays out its own scrolling areas (see `Workspace`).
+   */
+  layout?: "page" | "app";
+  /**
+   * Show the shared header (default `true`). A tool page can hide it to get the whole window;
+   * it should then offer its own way back (a link to the app's home) and a `ThemeToggle`.
+   */
+  header?: boolean;
 }
 
 /**
  * The shared toyonix chrome: header with the logo, cross-app nav, and theme toggle; optional
  * app-local nav; main; footer. Every app renders its pages inside it.
  */
-export function AppShell({ children, registry, appTitle, nav, footer }: AppShellProps) {
+export function AppShell({
+  children,
+  registry,
+  appTitle,
+  nav,
+  footer,
+  layout = "page",
+  header = true,
+}: AppShellProps) {
   const appId = getAppId();
   const apps: RegistryApp[] = navApps(useRegistry(registry));
   const navRef = useRef<HTMLElement>(null);
@@ -65,37 +84,58 @@ export function AppShell({ children, registry, appTitle, nav, footer }: AppShell
     });
   }
 
+  const skipLink = (
+    <a className="tx-skip-link" href="#main">
+      Skip to content
+    </a>
+  );
+  const sharedHeader = header ? (
+    <header className="tx-header">
+      <div className="tx-container tx-header__inner">
+        <a className="tx-logo" href="/">
+          <span className="tx-logo__mark" aria-hidden="true">
+            t
+          </span>
+          <span>toyonix</span>
+        </a>
+        <nav ref={navRef} className="tx-nav" aria-label="toyonix apps">
+          <a href="/" aria-current={appId === ROOT_APP_ID ? "true" : undefined}>
+            Home
+          </a>
+          {apps.map((app) => (
+            <a key={app.id} href={app.path} aria-current={app.id === appId ? "true" : undefined}>
+              {app.title}
+            </a>
+          ))}
+        </nav>
+        <ThemeToggle />
+      </div>
+    </header>
+  ) : null;
+  const subnav = nav ? (
+    <nav className="tx-subnav" aria-label="Section">
+      <div className="tx-container tx-subnav__inner">{nav}</div>
+    </nav>
+  ) : null;
+
+  if (layout === "app") {
+    return (
+      <div className="tx-app-shell">
+        {skipLink}
+        {sharedHeader}
+        {subnav}
+        <main id="main" className="tx-main tx-main--app">
+          {children}
+        </main>
+      </div>
+    );
+  }
+
   return (
     <>
-      <a className="tx-skip-link" href="#main">
-        Skip to content
-      </a>
-      <header className="tx-header">
-        <div className="tx-container tx-header__inner">
-          <a className="tx-logo" href="/">
-            <span className="tx-logo__mark" aria-hidden="true">
-              t
-            </span>
-            <span>toyonix</span>
-          </a>
-          <nav ref={navRef} className="tx-nav" aria-label="toyonix apps">
-            <a href="/" aria-current={appId === ROOT_APP_ID ? "true" : undefined}>
-              Home
-            </a>
-            {apps.map((app) => (
-              <a key={app.id} href={app.path} aria-current={app.id === appId ? "true" : undefined}>
-                {app.title}
-              </a>
-            ))}
-          </nav>
-          <ThemeToggle />
-        </div>
-      </header>
-      {nav ? (
-        <nav className="tx-subnav" aria-label="Section">
-          <div className="tx-container tx-subnav__inner">{nav}</div>
-        </nav>
-      ) : null}
+      {skipLink}
+      {sharedHeader}
+      {subnav}
       <main id="main" className="tx-main">
         {children}
       </main>
