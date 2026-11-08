@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { TreeList, type TreeListItem } from "../src/react";
+import { moveTreeItem, TreeList, type TreeListItem } from "../src/react";
 
 afterEach(cleanup);
 
@@ -135,5 +135,32 @@ describe("TreeList", () => {
 
     // Assert
     expect(row("board_edge").getAttribute("draggable")).not.toBe("true");
+  });
+});
+
+describe("moveTreeItem", () => {
+  const ids = (items: TreeListItem[]) => items.map((item) => item.id);
+
+  it("moves a row with the rows nested under it", () => {
+    // Act: plate_cutout (with its three children) after key_switch_cutouts
+    const moved = moveTreeItem(ITEMS, "plate", 1);
+
+    // Assert
+    expect(ids(moved)).toEqual(["switches", "plate", "footprints", "board", "cavity", "holes"]);
+  });
+
+  it("moves a nested row among its siblings only", () => {
+    // Act
+    const first = moveTreeItem(ITEMS, "cavity", 0);
+    const last = moveTreeItem(ITEMS, "footprints", 99);
+
+    // Assert: it stays inside plate_cutout, clamped to its siblings
+    expect(ids(first)).toEqual(["plate", "cavity", "footprints", "board", "switches", "holes"]);
+    expect(ids(last)).toEqual(["plate", "board", "cavity", "footprints", "switches", "holes"]);
+  });
+
+  it("returns the same list for an unknown row", () => {
+    // Act / Assert
+    expect(moveTreeItem(ITEMS, "nope", 0)).toBe(ITEMS);
   });
 });

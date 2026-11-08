@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useMemo,
   useRef,
   useState,
   type ComponentProps,
@@ -43,16 +44,53 @@ type DropPosition = "before" | "after";
 
 const depthOf = (item: TreeListItem | undefined) => item?.depth ?? 0;
 
-/** Indexes (into `items`) of the item at `index` and its siblings, in order. */
-function siblingIndexes(items: TreeListItem[], index: number): number[] {
+/**
+ * For each item, the indexes (into `items`) of it and its siblings, in order. One pass: rows
+ * with the same parent share one array.
+ */
+function siblingGroups(items: readonly TreeListItem[]): number[][] {
+  const groups: number[][] = [];
+  // The group still open at each depth; going back up closes the deeper ones.
+  const open: (number[] | undefined)[] = [];
+  items.forEach((item, index) => {
+    const depth = depthOf(item);
+    open.length = depth + 1;
+    const group = open[depth] ?? [];
+    open[depth] = group;
+    group.push(index);
+    groups[index] = group;
+  });
+  return groups;
+}
+
+/** Where the rows nested under the row at `index` end (exclusive). */
+function blockEnd(items: readonly TreeListItem[], index: number): number {
   const depth = depthOf(items[index]);
-  let start = index;
-  while (start > 0 && depthOf(items[start - 1]) >= depth) start--;
-  const siblings: number[] = [];
-  for (let i = start; i < items.length && depthOf(items[i]) >= depth; i++) {
-    if (depthOf(items[i]) === depth) siblings.push(i);
-  }
-  return siblings;
+  let end = index + 1;
+  while (end < items.length && depthOf(items[end]) > depth) end++;
+  return end;
+}
+
+/**
+ * Applies an `onMove(id, index)` to a list of items: moves the row (with the rows nested under
+ * it) to position `index` among its siblings. For apps that keep the rows in their own state.
+ */
+export function moveTreeItem<T extends TreeListItem>(items: readonly T[], id: string, index: number): T[] {
+  const from = items.findIndex((item) => item.id === id);
+  const siblings = siblingGroups(items)[from];
+  if (!siblings) return items as T[];
+  const others = siblings.filter((sibling) => sibling !== from);
+  const target = Math.max(0, Math.min(index, others.length));
+  if (target === siblings.indexOf(from)) return items as T[];
+
+  const end = blockEnd(items, from);
+  const block = items.slice(from, end);
+  const rest = [...items.slice(0, from), ...items.slice(end)];
+  // Before the sibling now at `target`, or after the last sibling and its nested rows.
+  const lastSibling = others.at(-1);
+  const before = others[target] ?? (lastSibling === undefined ? from : blockEnd(items, lastSibling));
+  const at = before > from ? before - block.length : before;
+  return [...rest.slice(0, at), ...block, ...rest.slice(at)];
 }
 
 /**
@@ -65,6 +103,8 @@ export function TreeList({ items, selected, onSelect, onMove, className, ...prop
   const [dragging, setDragging] = useState<string | null>(null);
   const [drop, setDrop] = useState<{ id: string; position: DropPosition } | null>(null);
 
+  const groups = useMemo(() => siblingGroups(items), [items]);
+  const siblingsOf = (index: number) => groups[index] ?? [index];
   const indexOf = (id: string) => items.findIndex((item) => item.id === id);
   const enabled = items.filter((item) => !item.disabled);
   const tabbable =
@@ -81,7 +121,7 @@ export function TreeList({ items, selected, onSelect, onMove, className, ...prop
   const moveBy = (index: number, step: -1 | 1) => {
     const item = items[index];
     if (!item || !canMove(item)) return;
-    const siblings = siblingIndexes(items, index);
+    const siblings = siblingsOf(index);
     const to = siblings.indexOf(index) + step;
     if (to >= 0 && to < siblings.length) onMove?.(item.id, to);
   };
@@ -104,7 +144,7 @@ export function TreeList({ items, selected, onSelect, onMove, className, ...prop
   const accepts = (target: string) => {
     if (!dragging || dragging === target) return false;
     const from = indexOf(dragging);
-    return from >= 0 && siblingIndexes(items, from).includes(indexOf(target));
+    return from >= 0 && siblingsOf(from).includes(indexOf(target));
   };
 
   const dropPosition = (event: DragEvent<HTMLLIElement>): DropPosition => {
@@ -120,7 +160,7 @@ export function TreeList({ items, selected, onSelect, onMove, className, ...prop
   const finishDrop = (target: string, position: DropPosition) => {
     if (!dragging) return;
     const fromIndex = indexOf(dragging);
-    const siblings = siblingIndexes(items, fromIndex);
+    const siblings = siblingsOf(fromIndex);
     const from = siblings.indexOf(fromIndex);
     let to = siblings.indexOf(indexOf(target)) + (position === "after" ? 1 : 0);
     if (from < to) to--;
@@ -130,7 +170,7 @@ export function TreeList({ items, selected, onSelect, onMove, className, ...prop
   return (
     <ul role="tree" className={cx("tx-tree-list", className)} {...props}>
       {items.map((item, index) => {
-        const siblings = siblingIndexes(items, index);
+        const siblings = siblingsOf(index);
         const movable = canMove(item);
         return (
           <li

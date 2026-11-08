@@ -87,7 +87,7 @@ export type { MenuItemExtras } from "./menu-item";
 export { Tooltip, type TooltipProps } from "./Tooltip";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
 export { ToggleGroup, ToggleGroupItem } from "./ToggleGroup";
-export { TreeList, type TreeListItem, type TreeListProps } from "./TreeList";
+export { moveTreeItem, TreeList, type TreeListItem, type TreeListProps } from "./TreeList";
 
 // tool pages (use with <AppShell layout="app">)
 export {

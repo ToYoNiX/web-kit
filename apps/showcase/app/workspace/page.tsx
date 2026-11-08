@@ -41,6 +41,7 @@ import {
   ToolbarSeparator,
   TrashIcon,
   TreeList,
+  moveTreeItem,
   UndoIcon,
   Workspace,
   WorkspaceBody,
@@ -79,32 +80,6 @@ const LAYERS: TreeListItem[] = [
   { id: "switches", label: "key_switch_cutouts", leading: "−", meta: "rect ×18" },
   { id: "holes", label: "mounting_holes", leading: "⧉", meta: "circle ×5" },
 ];
-
-/** Moves the row `id` (and its children) to position `index` among its siblings. */
-function moveLayer(items: TreeListItem[], id: string, index: number): TreeListItem[] {
-  const depth = (item: TreeListItem | undefined) => item?.depth ?? 0;
-  const from = items.findIndex((item) => item.id === id);
-  const level = depth(items[from]);
-  // The block: the row and the rows nested under it.
-  let end = from + 1;
-  while (end < items.length && depth(items[end]) > level) end++;
-  const block = items.slice(from, end);
-  const rest = [...items.slice(0, from), ...items.slice(end)];
-  // Its siblings, in the remaining rows: same level, same parent.
-  let start = from;
-  while (start > 0 && depth(rest[start - 1]) >= level) start--;
-  const siblings: number[] = [];
-  for (let i = start; i < rest.length && depth(rest[i]) >= level; i++) {
-    if (depth(rest[i]) === level) siblings.push(i);
-  }
-  let at = siblings[index];
-  if (at === undefined) {
-    // After the last sibling and everything nested under it.
-    at = siblings.length > 0 ? (siblings.at(-1) ?? start) + 1 : start;
-    while (at < rest.length && depth(rest[at]) > level) at++;
-  }
-  return [...rest.slice(0, at), ...block, ...rest.slice(at)];
-}
 
 export default function WorkspaceDemo() {
   const [left, setLeft] = useState(true);
@@ -302,7 +277,7 @@ export default function WorkspaceDemo() {
                 items={layers}
                 selected={layer}
                 onSelect={setLayer}
-                onMove={(id, index) => setLayers((current) => moveLayer(current, id, index))}
+                onMove={(id, index) => setLayers((current) => moveTreeItem(current, id, index))}
               />
               <p className="text-sm text-text-muted">
                 Drag a row, or select it and press <Kbd>Alt ↑</Kbd> / <Kbd>Alt ↓</Kbd>.

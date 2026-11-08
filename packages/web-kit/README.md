@@ -94,7 +94,8 @@ new width when the drag ends, so you can keep it (e.g. in `storage.app`) and pas
 ```
 
 `TreeList` shows nested rows (layers, parts) with one selected; give it `onMove` and rows can be
-reordered among their siblings by dragging or with Alt+↑/↓.
+reordered among their siblings by dragging or with Alt+↑/↓ (`moveTreeItem` applies a move to
+your own list of rows).
 
 `Canvas` is a drawing surface for a `WorkspaceMain`: SVG content in world units (e.g. mm) that
 the user pans (Hand tool, middle-drag or Space+drag) and zooms (wheel, around the pointer) over
