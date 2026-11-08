@@ -52,6 +52,7 @@ import {
   Tooltip,
 } from "@toyonix/web-kit/react";
 import { appHref } from "@toyonix/web-kit";
+import { ToolUiDemo } from "./tool-ui-demo";
 
 const TOC_DEMO = [
   { id: "toc-why", text: "Why a table of contents", depth: 2 as const },
@@ -345,6 +346,11 @@ export default function Showcase() {
               </Tabs>
             </Stack>
           </div>
+        </Section>
+
+        <Section>
+          <SectionLabel>Tool UI</SectionLabel>
+          <ToolUiDemo />
         </Section>
 
         <Section>

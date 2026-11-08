@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { AppShell, ThemeScript } from "@toyonix/web-kit/react";
-import { getRegistrySnapshot } from "@toyonix/web-kit/registry";
-import { demoRegistry } from "./demo-registry";
+import { ThemeScript } from "@toyonix/web-kit/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,18 +8,14 @@ export const metadata: Metadata = {
   description: "Every @toyonix/web-kit component, rendered with the real package.",
 };
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
-  const registry = (await getRegistrySnapshot()) ?? demoRegistry;
+// Each route group picks its AppShell: (site) is a normal page, workspace/ a full-window tool page.
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <ThemeScript />
       </head>
-      <body>
-        <AppShell registry={registry} appTitle="Web Kit">
-          {children}
-        </AppShell>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

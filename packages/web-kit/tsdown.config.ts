@@ -8,6 +8,7 @@ export default defineConfig({
     "registry/build": "src/registry/build.ts",
     "react/index": "src/react/index.ts",
     "next/index": "src/next/index.ts",
+    "codemirror/index": "src/codemirror/index.ts",
   },
   format: "esm",
   platform: "neutral",
@@ -16,7 +17,17 @@ export default defineConfig({
   // One output file per source module, so per-file "use client" directives survive.
   unbundle: true,
   clean: true,
-  deps: { neverBundle: [/^react($|\/)/, /^react-dom($|\/)/, /^next($|\/)/, /^radix-ui($|\/)/, /^node:/] },
+  deps: {
+    neverBundle: [
+      /^react($|\/)/,
+      /^react-dom($|\/)/,
+      /^next($|\/)/,
+      /^radix-ui($|\/)/,
+      /^@codemirror\//,
+      /^@lezer\//,
+      /^node:/,
+    ],
+  },
   inputOptions: {
     onLog(level, log, handler) {
       // Directives are preserved because of `unbundle`; rolldown warns regardless.

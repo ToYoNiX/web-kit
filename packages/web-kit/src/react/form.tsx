@@ -22,8 +22,20 @@ export function Field({
   );
 }
 
-export function Input({ className, ...props }: ComponentProps<"input">) {
-  return <input className={cx("tx-input", className)} {...props} />;
+export type InputProps = ComponentProps<"input"> & {
+  /** Text shown inside the box after the value, usually a unit: "mm", "°", "%". */
+  suffix?: ReactNode;
+};
+
+export function Input({ className, suffix, ...props }: InputProps) {
+  const input = <input className={cx("tx-input", className)} {...props} />;
+  if (suffix == null) return input;
+  return (
+    <span className="tx-input-group">
+      {input}
+      <span className="tx-input-group__suffix">{suffix}</span>
+    </span>
+  );
 }
 
 export function Select({ className, ...props }: ComponentProps<"select">) {

@@ -18,11 +18,12 @@ triggers `sync-sites`, which redeploys every site. The full design is in the pla
 ```
 packages/web-kit/      the published package
   src/css/             tokens.css, base.css, components.css, index.css, tailwind.css
-  src/                 core (env, slugs, theme), storage/, registry/, react/, next/
+  src/                 core (env, slugs, theme), storage/, registry/, react/, next/, codemirror/
   config/              shared eslint / prettier / tsconfig, published as-is
   scripts/build-css.mjs  copies CSS, generates fonts.css + woff2 from @fontsource
   test/                vitest (jsdom)
 apps/showcase/         private Next app: every component, built with the real package
+                       ((site)/ normal pages, workspace/ the full-window tool page)
 .github/workflows/     ci, release, sync-sites (this repo) + site-ci, site-deploy (reusable)
 scripts/sync-sites.mjs the dispatcher that redeploys all sites
 ```
@@ -88,6 +89,8 @@ Dependencies point one way: `css` ← core ← `react` ← `next`.
 - `src/react`: React only, never imports `next/*`. Cross-app links are plain `<a>`; in-app
   links come from the app (use `asChild`).
 - `src/next`: Node-only config helpers for `next.config.ts`.
+- `src/codemirror`: CodeMirror 6 extensions (theme only). No React; `@codemirror/*` and
+  `@lezer/*` are optional peers, never bundled.
 - `registry/build.ts`: Node, root site only.
 - Anything not in the `exports` map of `packages/web-kit/package.json` is private.
 - Client components start with `"use client"`. The build keeps one output file per module

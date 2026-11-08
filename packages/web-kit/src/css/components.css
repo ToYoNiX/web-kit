@@ -1158,6 +1158,568 @@
   white-space: nowrap;
 }
 
+/* ============================== icons, keys ============================== */
+
+.tx-icon {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.tx-btn .tx-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.tx-icon-btn .tx-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.tx-icon-btn {
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+
+.tx-icon-btn:hover {
+  background: var(--tx-surface-2);
+}
+
+.tx-icon-btn[aria-pressed="true"] {
+  background: var(--tx-accent);
+  color: var(--tx-accent-contrast);
+}
+
+.tx-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tx-kbd {
+  display: inline-block;
+  padding: 0 5px;
+  border: 1.5px solid currentColor;
+  border-radius: var(--tx-radius-sm);
+  font-family: var(--tx-font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.tx-tooltip .tx-kbd {
+  margin-left: 4px;
+}
+
+/* ============================== compact (tool UIs) ============================== */
+
+/*
+ * Denser controls for toolbars, panels and inspectors. `.tx-compact` on any container makes
+ * every control inside compact (Toolbar and Workspace add it); `.tx-btn--sm` and
+ * `.tx-icon-btn--sm` do it for one control.
+ */
+.tx-btn--sm,
+.tx-compact .tx-btn {
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.tx-compact .tx-icon-btn {
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+}
+
+.tx-compact .tx-icon-btn .tx-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.tx-icon-btn.tx-icon-btn--sm {
+  width: 28px;
+  height: 28px;
+  box-shadow: none;
+  font-size: 14px;
+}
+
+.tx-icon-btn.tx-icon-btn--sm .tx-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.tx-compact :is(.tx-input, .tx-select, .tx-textarea, .tx-input-group) {
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.tx-compact .tx-input-group > .tx-input {
+  padding: 0;
+}
+
+.tx-compact .tx-field {
+  gap: 4px;
+}
+
+.tx-compact .tx-label {
+  font-size: 13px;
+}
+
+.tx-compact .tx-form {
+  gap: 12px;
+}
+
+.tx-compact .tx-tabs__list {
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+}
+
+.tx-compact .tx-tabs__trigger {
+  padding: 4px 10px;
+  font-size: 14px;
+}
+
+.tx-compact .tx-toggle-group__item {
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+/* ============================== input with a suffix ============================== */
+
+.tx-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: var(--tx-border-width) solid var(--tx-border);
+  border-radius: var(--tx-radius-sm);
+  background: var(--tx-bg);
+  font-size: 15px;
+  transition:
+    border-color 0.12s,
+    box-shadow 0.12s;
+}
+
+.tx-input-group:focus-within {
+  border-color: var(--tx-ring);
+  box-shadow: 4px 4px 0 var(--tx-ring);
+}
+
+/* width 0 + flex-grow: an <input>'s built-in width (about 20 characters) must not widen the group. */
+.tx-input-group > .tx-input {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: inherit;
+}
+
+.tx-input-group__suffix {
+  flex: none;
+  color: var(--tx-text-muted);
+  font-family: var(--tx-font-mono);
+  font-size: 0.8em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ============================== menu items (icons, details, submenus) ============================== */
+
+.tx-menu__icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+}
+
+.tx-menu__icon .tx-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.tx-menu__text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.tx-menu__description {
+  color: var(--tx-text-muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.tx-menu__shortcut {
+  margin-left: auto;
+  padding: 0 0 0 16px;
+  border: 0;
+  color: var(--tx-text-muted);
+  font-size: 12px;
+}
+
+.tx-menu__chevron {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+}
+
+.tx-menu__shortcut + .tx-menu__chevron {
+  margin-left: 6px;
+}
+
+.tx-menu__dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: currentColor;
+}
+
+.tx-menu__item[data-highlighted] :is(.tx-menu__description, .tx-menu__shortcut) {
+  color: inherit;
+}
+
+/* A submenu's item stays marked while its submenu is open. */
+.tx-menu__item[data-state="open"]:not([data-highlighted]) {
+  background: var(--tx-surface-2);
+}
+
+.tx-menu__item--danger {
+  color: var(--tx-danger);
+}
+
+.tx-menu__item--danger[data-highlighted] {
+  background: var(--tx-danger);
+  color: #fff;
+}
+
+/* ============================== toolbar, toggle group ============================== */
+
+.tx-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 12px;
+  border-bottom: var(--tx-border-width) solid var(--tx-border);
+  background: var(--tx-bg);
+}
+
+.tx-toolbar__separator {
+  align-self: stretch;
+  width: var(--tx-border-width);
+  margin: 2px 4px;
+  background: var(--tx-border);
+}
+
+.tx-spacer {
+  flex: 1;
+}
+
+.tx-toggle-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  width: fit-content;
+  max-width: 100%;
+  border: var(--tx-border-width) solid var(--tx-border);
+  border-radius: var(--tx-radius-sm);
+  background: var(--tx-surface);
+  box-shadow: var(--tx-btn-shadow);
+}
+
+.tx-toggle-group__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--tx-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.tx-toggle-group__item + .tx-toggle-group__item {
+  border-left: var(--tx-border-width) solid var(--tx-border);
+}
+
+.tx-toggle-group__item:hover {
+  background: var(--tx-surface-2);
+}
+
+.tx-toggle-group__item[data-state="on"] {
+  background: var(--tx-accent);
+  color: var(--tx-accent-contrast);
+}
+
+.tx-toggle-group__item:focus-visible {
+  outline-color: var(--tx-text);
+  outline-offset: -5px;
+}
+
+.tx-toggle-group__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ============================== tool pages: app shell, workspace ============================== */
+
+/* <AppShell layout="app">: the page is exactly the window; main fills what the header leaves. */
+.tx-app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.tx-app-shell > :is(.tx-header, .tx-subnav) {
+  position: relative;
+  flex: none;
+}
+
+/* Two classes: must beat .tx-main's defaults, which come later in this file. */
+.tx-main.tx-main--app {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tx-workspace {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--tx-bg);
+}
+
+.tx-workspace__body {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tx-workspace__main {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/*
+ * Side panels slide closed to a thin tab. Same motion as the kit's other drawers: 0.22s
+ * ease-out in, 0.16s ease-in out. The content keeps its full width while the panel narrows,
+ * so it slides out of view instead of reflowing.
+ */
+.tx-side-panel {
+  --tx-side-panel-tab: 30px;
+  position: relative;
+  flex: none;
+  width: var(--tx-side-panel-width, 340px);
+  overflow: hidden;
+  background: var(--tx-surface);
+  transition: width 0.16s ease-in;
+}
+
+.tx-side-panel[data-state="open"] {
+  transition: width 0.22s ease-out;
+}
+
+.tx-side-panel[data-state="closed"] {
+  width: var(--tx-side-panel-tab);
+}
+
+.tx-side-panel--left {
+  border-right: var(--tx-border-width) solid var(--tx-border);
+}
+
+.tx-side-panel--right {
+  border-left: var(--tx-border-width) solid var(--tx-border);
+}
+
+.tx-side-panel__content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: calc(var(--tx-side-panel-width, 340px) - var(--tx-border-width));
+  background: var(--tx-surface);
+}
+
+.tx-side-panel--left .tx-side-panel__content {
+  right: 0;
+}
+
+.tx-side-panel--right .tx-side-panel__content {
+  left: 0;
+}
+
+/* Hidden once the slide has finished, so nothing in it can be reached. */
+.tx-side-panel[data-state="closed"] .tx-side-panel__content {
+  visibility: hidden;
+  transition: visibility 0s linear 0.16s;
+}
+
+.tx-side-panel__head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 8px 6px 14px;
+  border-bottom: var(--tx-border-width) solid var(--tx-border);
+}
+
+.tx-side-panel__title {
+  margin-right: auto;
+  color: var(--tx-text-muted);
+  font-family: var(--tx-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tx-side-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* The tab a hidden panel leaves behind: its title, written along the edge. */
+.tx-side-panel__tab {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 14px 0;
+  border: 0;
+  background: var(--tx-surface);
+  color: var(--tx-text-muted);
+  font-family: var(--tx-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.12s,
+    background 0.12s,
+    color 0.12s;
+}
+
+/* On the left edge the title reads bottom to top; it still starts at the top. */
+.tx-side-panel--left .tx-side-panel__tab {
+  justify-content: flex-end;
+  transform: rotate(180deg);
+}
+
+.tx-side-panel[data-state="closed"] .tx-side-panel__tab {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0.1s, 0s, 0s;
+}
+
+.tx-side-panel__tab:hover {
+  background: var(--tx-accent);
+  color: var(--tx-accent-contrast);
+}
+
+.tx-side-panel__tab:focus-visible {
+  outline-offset: -5px;
+}
+
+/* Narrow screens: the tab stays in place and an open panel slides in over the main area. */
+@media (max-width: 760px) {
+  .tx-side-panel,
+  .tx-side-panel[data-state="open"] {
+    width: var(--tx-side-panel-tab);
+    overflow: visible;
+  }
+
+  .tx-side-panel__content {
+    z-index: 30;
+    width: min(var(--tx-side-panel-width, 340px), calc(100vw - 56px));
+    border: 0 solid var(--tx-border);
+    box-shadow: var(--tx-shadow);
+    transition: transform 0.16s ease-in;
+  }
+
+  .tx-side-panel--left .tx-side-panel__content {
+    right: auto;
+    left: 0;
+    border-right-width: var(--tx-border-width);
+    transform: translateX(-100%);
+  }
+
+  .tx-side-panel--right .tx-side-panel__content {
+    right: 0;
+    left: auto;
+    border-left-width: var(--tx-border-width);
+    transform: translateX(100%);
+  }
+
+  .tx-side-panel[data-state="open"] .tx-side-panel__content {
+    transform: none;
+    transition: transform 0.22s ease-out;
+  }
+
+  .tx-side-panel[data-state="closed"] .tx-side-panel__content {
+    transition:
+      transform 0.16s ease-in,
+      visibility 0s linear 0.16s;
+  }
+
+  .tx-side-panel__tab {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.tx-status-bar {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  border-top: var(--tx-border-width) solid var(--tx-border);
+  background: var(--tx-bg);
+  color: var(--tx-text-muted);
+  font-family: var(--tx-font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.tx-status-bar > :not(.tx-spacer) {
+  padding: 4px 12px;
+  border-right: 1px solid color-mix(in srgb, var(--tx-border) 30%, transparent);
+}
+
+.tx-status-bar > .tx-spacer + * {
+  border-left: 1px solid color-mix(in srgb, var(--tx-border) 30%, transparent);
+}
+
+.tx-status-bar > :last-child {
+  border-right: 0;
+}
+
 /* ============================== motion ============================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1173,6 +1735,16 @@
   .tx-input,
   .tx-select,
   .tx-textarea {
+    transition: none;
+  }
+
+  .tx-input-group,
+  .tx-icon-btn,
+  .tx-toggle-group__item,
+  .tx-side-panel,
+  .tx-side-panel[data-state],
+  .tx-side-panel__tab,
+  .tx-side-panel[data-state] .tx-side-panel__content {
     transition: none;
   }
 

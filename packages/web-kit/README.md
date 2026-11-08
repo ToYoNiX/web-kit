@@ -51,9 +51,39 @@ Configs: `export { default } from "@toyonix/web-kit/eslint"` (eslint.config.mjs)
 | `@toyonix/web-kit/registry`                              | registry types, `getRegistrySnapshot`, `fetchRegistry`          |
 | `@toyonix/web-kit/registry/build`                        | `buildRegistry` (root site only, Node)                          |
 | `@toyonix/web-kit/next`                                  | `withWebKit` for next.config                                    |
+| `@toyonix/web-kit/codemirror`                            | `toyonixTheme` for CodeMirror 6 editors                         |
 | `@toyonix/web-kit/css`                                   | all CSS without Tailwind (works in plain HTML)                  |
 | `@toyonix/web-kit/tailwind.css`                          | all CSS + Tailwind theme mapped to the tokens                   |
 | `@toyonix/web-kit/eslint`, `/prettier`, `/tsconfig.json` | shared configs                                                  |
+
+## Tool pages
+
+Editor-style pages (a canvas, panels, a toolbar) fill the window instead of scrolling. Give
+that route its own layout with `<AppShell layout="app">` (add `header={false}` to hide the
+shared header; then link back to your home page and include `<ThemeToggle>` yourself), and
+build the page from the kit:
+
+```tsx
+<Workspace>
+  <Toolbar aria-label="Project">
+    <ToolbarButton asChild>
+      <IconButton label="Undo" shortcut="Ctrl Z">
+        <UndoIcon />
+      </IconButton>
+    </ToolbarButton>
+    <Spacer />
+  </Toolbar>
+  <WorkspaceBody>
+    <SidePanel side="left" title="Config" open={open} onOpenChange={setOpen}>
+      …
+    </SidePanel>
+    <WorkspaceMain>…</WorkspaceMain>
+  </WorkspaceBody>
+  <StatusBar>…</StatusBar>
+</Workspace>
+```
+
+The kit shows shortcuts (`shortcut` props, `<Kbd>`) but never binds keys: the app does.
 
 ## Rules for sites
 

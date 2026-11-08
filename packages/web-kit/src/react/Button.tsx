@@ -3,17 +3,27 @@ import { Slot } from "radix-ui";
 import { cx } from "./cx";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+/** `sm` is the compact size for toolbars and dense tool UIs (see also the `tx-compact` class). */
+export type ButtonSize = "md" | "sm";
 
 interface ButtonOwnProps {
   variant?: ButtonVariant;
+  size?: ButtonSize;
   /** Render the single child (e.g. next/link's <Link>) with button styling instead of a <button>. */
   asChild?: boolean;
 }
 
 export type ButtonProps = ButtonOwnProps & ComponentProps<"button">;
 
-export function Button({ variant = "primary", asChild = false, className, type, ...props }: ButtonProps) {
-  const classes = cx("tx-btn", `tx-btn--${variant}`, className);
+export function Button({
+  variant = "primary",
+  size = "md",
+  asChild = false,
+  className,
+  type,
+  ...props
+}: ButtonProps) {
+  const classes = cx("tx-btn", `tx-btn--${variant}`, size === "sm" && "tx-btn--sm", className);
   if (asChild) return <Slot.Root className={classes} {...props} />;
   return <button type={type ?? "button"} className={classes} {...props} />;
 }
@@ -21,8 +31,14 @@ export function Button({ variant = "primary", asChild = false, className, type, 
 export type LinkButtonProps = ButtonOwnProps & ComponentProps<"a">;
 
 /** A link styled as a button. For in-app links use <Button asChild><Link …/></Button>. */
-export function LinkButton({ variant = "primary", asChild = false, className, ...props }: LinkButtonProps) {
-  const classes = cx("tx-btn", `tx-btn--${variant}`, className);
+export function LinkButton({
+  variant = "primary",
+  size = "md",
+  asChild = false,
+  className,
+  ...props
+}: LinkButtonProps) {
+  const classes = cx("tx-btn", `tx-btn--${variant}`, size === "sm" && "tx-btn--sm", className);
   if (asChild) return <Slot.Root className={classes} {...props} />;
   return <a className={classes} {...props} />;
 }
