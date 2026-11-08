@@ -66,12 +66,15 @@ export default function WorkspaceDemo() {
   const [operation, setOperation] = useState("add");
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
 
-  // The kit doesn't bind keys; the page decides its shortcuts.
+  // The kit doesn't bind keys; the page decides its shortcuts. Ctrl/⌘+B and Ctrl/⌘+Alt+B, like an
+  // editor's sidebars: not Alt+number (switches tabs in Firefox on Linux and Windows) and not
+  // Ctrl+[ (CodeMirror's outdent).
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (!event.altKey) return;
-      if (event.key === "1") setLeft((open) => !open);
-      if (event.key === "2") setRight((open) => !open);
+      if (!(event.ctrlKey || event.metaKey) || event.shiftKey || event.key.toLowerCase() !== "b") return;
+      event.preventDefault();
+      if (event.altKey) setRight((open) => !open);
+      else setLeft((open) => !open);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -83,7 +86,7 @@ export default function WorkspaceDemo() {
         <ToolbarButton asChild>
           <IconButton
             label="Show or hide the YAML"
-            shortcut="Alt 1"
+            shortcut="Ctrl B"
             pressed={left}
             onClick={() => setLeft(!left)}
           >
@@ -147,7 +150,7 @@ export default function WorkspaceDemo() {
         <ToolbarButton asChild>
           <IconButton
             label="Show or hide the controls"
-            shortcut="Alt 2"
+            shortcut="Ctrl Alt B"
             pressed={right}
             onClick={() => setRight(!right)}
           >
@@ -157,7 +160,7 @@ export default function WorkspaceDemo() {
       </Toolbar>
 
       <WorkspaceBody>
-        <SidePanel side="left" title="YAML" width={380} open={left} onOpenChange={setLeft} shortcut="Alt 1">
+        <SidePanel side="left" title="YAML" width={380} open={left} onOpenChange={setLeft} shortcut="Ctrl B">
           <CodeEditor doc={YAML} label="Config" />
         </SidePanel>
 
@@ -190,7 +193,7 @@ export default function WorkspaceDemo() {
           </ContextMenu>
         </WorkspaceMain>
 
-        <SidePanel side="right" title="Controls" open={right} onOpenChange={setRight} shortcut="Alt 2">
+        <SidePanel side="right" title="Controls" open={right} onOpenChange={setRight} shortcut="Ctrl Alt B">
           <Tabs defaultValue="shape" className="p-3.5">
             <TabsList>
               <TabsTrigger value="shape">Shape</TabsTrigger>
@@ -236,7 +239,7 @@ export default function WorkspaceDemo() {
         </span>
         <span>tool: {tool}</span>
         <Spacer />
-        <span>Alt 1 / Alt 2 toggle the panels</span>
+        <span>Ctrl B / Ctrl Alt B toggle the panels</span>
       </StatusBar>
     </Workspace>
   );
