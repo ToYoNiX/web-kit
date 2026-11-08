@@ -93,6 +93,9 @@ new width when the drag ends, so you can keep it (e.g. in `storage.app`) and pas
 <SidePanel side="left" title="Config" resizable width={width} onWidthChange={setWidth}>
 ```
 
+`TreeList` shows nested rows (layers, parts) with one selected; give it `onMove` and rows can be
+reordered among their siblings by dragging or with Alt+↑/↓.
+
 ## Rules for sites
 
 - Use tokens (`bg-surface`, `text-accent-text`, `var(--tx-accent)`), never hard-coded colors.

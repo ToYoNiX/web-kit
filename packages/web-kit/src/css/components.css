@@ -1843,3 +1843,109 @@
   display: block;
   min-height: 50vh;
 }
+
+/* ---------------------------------------------------------------- tree list */
+
+.tx-tree-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--tx-border-width) solid var(--tx-border);
+  background: var(--tx-surface);
+}
+
+.tx-tree-list__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px 7px calc(10px + var(--tx-tree-depth, 0) * 16px);
+  border-bottom: 1px solid color-mix(in srgb, var(--tx-border) 20%, transparent);
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tx-tree-list__item:last-child {
+  border-bottom: 0;
+}
+
+.tx-tree-list__item:hover {
+  background: var(--tx-surface-2);
+}
+
+.tx-tree-list__item:focus-visible {
+  outline: 2px solid var(--tx-text);
+  outline-offset: -4px;
+}
+
+.tx-tree-list__item[aria-selected="true"] {
+  background: var(--tx-accent);
+  color: var(--tx-accent-contrast);
+}
+
+.tx-tree-list__item[aria-disabled="true"] {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.tx-tree-list__item[draggable="true"] {
+  cursor: grab;
+}
+
+.tx-tree-list__item[data-dragging] {
+  opacity: 0.45;
+}
+
+/* Where a dragged row will land. */
+.tx-tree-list__item[data-drop="before"] {
+  box-shadow: inset 0 3px 0 var(--tx-accent);
+}
+
+.tx-tree-list__item[data-drop="after"] {
+  box-shadow: inset 0 -3px 0 var(--tx-accent);
+}
+
+/* On the pink selected row, the drop line is drawn in ink so it still shows. */
+.tx-tree-list__item[aria-selected="true"][data-drop="before"] {
+  box-shadow: inset 0 3px 0 var(--tx-text);
+}
+
+.tx-tree-list__item[aria-selected="true"][data-drop="after"] {
+  box-shadow: inset 0 -3px 0 var(--tx-text);
+}
+
+.tx-tree-list__leading {
+  flex: none;
+  width: 1.2em;
+  font-family: var(--tx-font-mono);
+  font-weight: 700;
+  text-align: center;
+}
+
+.tx-tree-list__label {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--tx-font-mono);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tx-tree-list__meta {
+  flex: none;
+  margin-left: auto;
+  color: var(--tx-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.tx-tree-list__item[aria-selected="true"] .tx-tree-list__meta {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.tx-compact .tx-tree-list__item {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 13px;
+}

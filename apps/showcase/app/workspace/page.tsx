@@ -41,10 +41,12 @@ import {
   ToolbarButton,
   ToolbarSeparator,
   TrashIcon,
+  TreeList,
   UndoIcon,
   Workspace,
   WorkspaceBody,
   WorkspaceMain,
+  type TreeListItem,
 } from "@toyonix/web-kit/react";
 import { CodeEditor } from "./code-editor";
 
@@ -59,12 +61,49 @@ outlines:
       fillet: 3 # rounded corners
 `;
 
+const LAYERS: TreeListItem[] = [
+  { id: "plate", label: "plate_cutout", leading: "+", meta: "outline" },
+  { id: "footprints", label: "key_footprints", depth: 1, leading: "+", meta: "rect ×18" },
+  { id: "board", label: "board_edge", depth: 1, leading: "+", meta: "rectangle" },
+  { id: "cavity", label: "controller_cavity", depth: 1, leading: "−", meta: "outline" },
+  { id: "switches", label: "key_switch_cutouts", leading: "−", meta: "rect ×18" },
+  { id: "holes", label: "mounting_holes", leading: "⧉", meta: "circle ×5" },
+];
+
+/** Moves the row `id` (and its children) to position `index` among its siblings. */
+function moveLayer(items: TreeListItem[], id: string, index: number): TreeListItem[] {
+  const depth = (item: TreeListItem | undefined) => item?.depth ?? 0;
+  const from = items.findIndex((item) => item.id === id);
+  const level = depth(items[from]);
+  // The block: the row and the rows nested under it.
+  let end = from + 1;
+  while (end < items.length && depth(items[end]) > level) end++;
+  const block = items.slice(from, end);
+  const rest = [...items.slice(0, from), ...items.slice(end)];
+  // Its siblings, in the remaining rows: same level, same parent.
+  let start = from;
+  while (start > 0 && depth(rest[start - 1]) >= level) start--;
+  const siblings: number[] = [];
+  for (let i = start; i < rest.length && depth(rest[i]) >= level; i++) {
+    if (depth(rest[i]) === level) siblings.push(i);
+  }
+  let at = siblings[index];
+  if (at === undefined) {
+    // After the last sibling and everything nested under it.
+    at = siblings.length > 0 ? (siblings.at(-1) ?? start) + 1 : start;
+    while (at < rest.length && depth(rest[at]) > level) at++;
+  }
+  return [...rest.slice(0, at), ...block, ...rest.slice(at)];
+}
+
 export default function WorkspaceDemo() {
   const [left, setLeft] = useState(true);
   const [right, setRight] = useState(true);
   const [tool, setTool] = useState("select");
   const [operation, setOperation] = useState("add");
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
+  const [layers, setLayers] = useState(LAYERS);
+  const [layer, setLayer] = useState<string | null>("board");
 
   // The kit doesn't bind keys; the page decides its shortcuts.
   useEffect(() => {
@@ -240,7 +279,18 @@ export default function WorkspaceDemo() {
                 </ToggleGroup>
               </div>
             </TabsContent>
-            <TabsContent value="layers">board_edge, controller_cavity, mounting_holes</TabsContent>
+            <TabsContent value="layers" className="grid gap-2">
+              <TreeList
+                aria-label="Shapes in switch_plate"
+                items={layers}
+                selected={layer}
+                onSelect={setLayer}
+                onMove={(id, index) => setLayers((current) => moveLayer(current, id, index))}
+              />
+              <p className="text-sm text-text-muted">
+                Drag a row, or select it and press <Kbd>Alt ↑</Kbd> / <Kbd>Alt ↓</Kbd>.
+              </p>
+            </TabsContent>
           </Tabs>
         </SidePanel>
       </WorkspaceBody>
