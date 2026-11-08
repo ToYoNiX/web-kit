@@ -1,5 +1,14 @@
 # @toyonix/web-kit
 
+## 0.1.5
+
+### Patch Changes
+
+- [#12](https://github.com/ToYoNiX/web-kit/pull/12) [`0baf642`](https://github.com/ToYoNiX/web-kit/commit/0baf642a92ad4297ff58b6c62c008db05e355dfe) Thanks [@ToYoNiX](https://github.com/ToYoNiX)! - `AppShell` no longer adds the current app to the shared header when it is hidden from the nav:
+  when the registry lists it with `"nav": false`, or when the app passes the new
+  `appNav={false}` prop (for apps the registry doesn't list yet). Apps with `"nav": false` in
+  their package.json should pass `appNav={false}`.
+
 ## 0.1.4
 
 ### Patch Changes
