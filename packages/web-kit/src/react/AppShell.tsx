@@ -12,6 +12,12 @@ export interface AppShellProps {
   registry?: Registry | null;
   /** This app's nav title, used if the registry doesn't list it yet (e.g. a brand-new app). */
   appTitle?: string;
+  /**
+   * Whether this app gets its own link in the shared header (default `true`). Pass `false` for
+   * an app whose package.json says `"nav": false`: otherwise, while the registry doesn't list
+   * the app, the header adds it anyway so you can see where you are.
+   */
+  appNav?: boolean;
   /** App-local links, shown in a bar under the shared header. Set aria-current yourself. */
   nav?: ReactNode;
   /** Replaces the default footer content. */
@@ -37,13 +43,17 @@ export function AppShell({
   children,
   registry,
   appTitle,
+  appNav = true,
   nav,
   footer,
   layout = "page",
   header = true,
 }: AppShellProps) {
   const appId = getAppId();
-  const apps: RegistryApp[] = navApps(useRegistry(registry));
+  const currentRegistry = useRegistry(registry);
+  const apps: RegistryApp[] = navApps(currentRegistry);
+  // An app hidden from the nav (by the registry or by the app itself) is never added back.
+  const hidden = !appNav || currentRegistry?.apps.some((app) => app.id === appId && !app.nav) === true;
   const navRef = useRef<HTMLElement>(null);
   const appCount = apps.length;
 
@@ -72,7 +82,7 @@ export function AppShell({
       window.removeEventListener("resize", update);
     };
   }, [appCount]);
-  if (appId !== ROOT_APP_ID && !apps.some((app) => app.id === appId)) {
+  if (appId !== ROOT_APP_ID && !hidden && !apps.some((app) => app.id === appId)) {
     apps.push({
       id: appId,
       title: appTitle ?? appId,
